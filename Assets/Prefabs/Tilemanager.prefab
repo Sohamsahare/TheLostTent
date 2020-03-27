@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7804535298292967048
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7804535298292967050}
+  - component: {fileID: 7804535298292967051}
+  - component: {fileID: 7804535298292967053}
+  m_Layer: 0
+  m_Name: Tilemanager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &7804535298292967050
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7804535298292967048}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7804535298292967051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7804535298292967048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 669075e46f0fb734dbc1f51bb66e9767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUsingTilemaps: 1
+  elevationAdjuster: 1.5
+  rowOffset: {x: 0.44, y: -0.25}
+  colOffset: {x: 0.432, y: 0.25}
+  tileEntries:
+  - spawnType: 0
+    color: {r: 0, g: 0, b: 1, a: 1}
+    prefabs:
+    - {fileID: 115408, guid: 79a079e492d5cb443a15b87424d9b408, type: 3}
+    tiles:
+    - {fileID: 11400000, guid: d5a4e437f4bd9b54d8fcd259c71b5417, type: 2}
+    elevation: 0
+    name: 
+  - spawnType: 0
+    color: {r: 0, g: 0, b: 0, a: 1}
+    prefabs:
+    - {fileID: 125490, guid: ac4d4f17b15fb034098d7e651513e50a, type: 3}
+    tiles:
+    - {fileID: 11400000, guid: 743dea685d001ab42ad39e507afe4173, type: 2}
+    elevation: 2
+    name: 
+  - spawnType: 0
+    color: {r: 1, g: 1, b: 0, a: 1}
+    prefabs:
+    - {fileID: 100376, guid: 15caa9a5a5e8e83469f03749647f8e51, type: 3}
+    tiles:
+    - {fileID: 11400000, guid: 61c67d766ac4a3b4d8aa562d58b2a721, type: 2}
+    elevation: 1
+    name: 
+  - spawnType: 0
+    color: {r: 1, g: 0, b: 0, a: 1}
+    prefabs:
+    - {fileID: 188890, guid: 0a4668b8977114a40b18acb738bdcf85, type: 3}
+    tiles:
+    - {fileID: 11400000, guid: 2f81cae90e424354484c348b9ac791f8, type: 2}
+    elevation: 0
+    name: 
+--- !u!114 &7804535298292967053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7804535298292967048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e571ae7e46703646ae4f3f486af380f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  numLayers: 1
+  levelmaps:
+  - {fileID: 2800000, guid: f0e9bbeb204d00b4b86cd4c386de9abe, type: 3}
+  tilemaps:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
