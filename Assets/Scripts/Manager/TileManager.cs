@@ -41,8 +41,51 @@ namespace TheLostTent
 
             for (int current = 0; current < levelData.numLayers; current++)
             {
-                SpawnTiles(current);
+                // Vector2 startPosition = getCurrentPosition(current);
+                SpawnTiles(current, this.startPosition);
             }
+        }
+
+        private Vector2 getCurrentPosition(int current)
+        {
+            Vector2 position = new Vector2();
+            int levelMapPPU = levelData.levelMapPPU;
+            switch (current)
+            {
+                // top left
+                case 0:
+                    position = startPosition + new Vector2(1, -1) * levelMapPPU;
+                    break;
+                // top middle
+                case 1:
+                    position = startPosition + Vector2.up * levelMapPPU;
+                    break;
+                // top right
+                case 2:
+                    position = startPosition + Vector2.one * levelMapPPU;
+                    break;
+                // middle left
+                case 3:
+                    position = startPosition + Vector2.left * levelMapPPU;
+                    break;
+                case 5:
+                    position = startPosition + Vector2.right * levelMapPPU;
+                    break;
+                case 6:
+                    position = startPosition + Vector2.one * -1 * levelMapPPU;
+                    break;
+                case 7:
+                    position = startPosition + Vector2.down * -1 * levelMapPPU;
+                    break;
+                case 8:
+                    position = startPosition + new Vector2(1, -1) * levelMapPPU;
+                    break;
+                // middle case
+                default:
+                    position = startPosition;
+                    break;
+            }
+            return position;
         }
 
         Vector2 getNextTilePosition(int w, int h, float elevation)
@@ -53,14 +96,14 @@ namespace TheLostTent
             return rowTile;
         }
 
-        void SpawnTiles(int current)
+        void SpawnTiles(int current, Vector2 startPosition)
         {
             var levelMap = levelData.levelmaps[current];
             if (isUsingTilemaps)
             {
                 // placing tiles on map
                 var tilemap = levelData.tilemaps[current];
-                PlaceTiles(levelMap);
+                PlaceTiles(levelMap, startPosition);
             }
             else
             {
@@ -77,7 +120,7 @@ namespace TheLostTent
             throw new NotImplementedException();
         }
 
-        private void PlaceTiles(Texture2D levelMap)
+        private void PlaceTiles(Texture2D levelMap, Vector2 startPosition)
         {
             // for each pixel in map
             for (int h = 0; h < levelMap.height; h++)

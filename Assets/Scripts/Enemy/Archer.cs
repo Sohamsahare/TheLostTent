@@ -37,7 +37,7 @@ namespace TheLostTent
 
         protected override void ProcessPath()
         {
-            if (path == null || heart.IsDead)
+            if (path == null || heart.IsDead || isAttacking)
             {
                 return;
             }
@@ -72,11 +72,12 @@ namespace TheLostTent
             Vector2 attackDirection = (target.position - transform.position).normalized;
             float angle = DetermineArrowAngle(attackDirection);
             int dir = CharacterRenderer.DirectionToIndex(direction, split);
+            isoRenderer.animator.Play(attackAnimations[dir]);
+            yield return new WaitForSeconds(attackDuration / 4);
             // TODO: Add pooler
             GameObject projectile = Instantiate(arrowPrefab, transform.position, Quaternion.Euler(45, 0, angle));
             projectile.GetComponent<Projectile>().Initialise(damage, projectileSpeed, attackDirection);
             // render animations
-            isoRenderer.animator.Play(attackAnimations[dir]);
             Destroy(projectile, 3f);
             float randomDelay = UnityEngine.Random.Range(0, maxAttackDelayRange);
             yield return new WaitForSeconds(attackCooldown + randomDelay);

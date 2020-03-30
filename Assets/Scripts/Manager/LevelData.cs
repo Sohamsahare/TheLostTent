@@ -6,6 +6,7 @@ public class LevelData : MonoBehaviour
     public int numLayers;
     public Texture2D[] levelmaps;
     public Tilemap[] tilemaps;
+    public int levelMapPPU = 16;
     public LevelData(int numLayers, Texture2D[] levelmaps, Tilemap[] tilemaps)
     {
         this.numLayers = numLayers;

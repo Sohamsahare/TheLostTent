@@ -126,7 +126,6 @@ GameObject:
   - component: {fileID: 3628018178179346403}
   - component: {fileID: 2808100737930353971}
   - component: {fileID: 6620081014946577455}
-  - component: {fileID: 7361302984032743433}
   - component: {fileID: 9168302159547921138}
   - component: {fileID: 3625734700701038854}
   m_Layer: 0
@@ -215,19 +214,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 1
---- !u!114 &7361302984032743433
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4371087681798328710}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60f85af2ac4fcb4499bc02a0b5428178, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HP: 100
 --- !u!114 &9168302159547921138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,10 +241,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HP: 100
   target: {fileID: 0}
-  attackRange: 5
+  attackRange: 2
   attackCooldown: 2
-  nextWaypointDistance: 5
+  nextWaypointDistance: 2
   attackDuration: 1
+  maxAttackDelayRange: 1
   damage: 10
   dieAnimation: 1
   projectileSpeed: 150

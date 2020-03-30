@@ -9,21 +9,27 @@ namespace TheLostTent
         public float attackPower = 33f;
         public float attackSpeed = 100f;
         public float dashDistance = 5f;
+        public float dashDamageMultiplier = 2f;
         public float dashCooldown = 1f;
         public float dashDuration = .5f;
         public GameObject fireballPrefab;
         public CameraShake cameraShake;
         private new CircleCollider2D collider;
+        private BoxCollider2D trigger;
         private bool isDashing;
         private Heart heart;
         CharacterMotor motor;
+        private TrailRenderer dashTrail;
 
         private new void Awake()
         {
             base.Awake();
             collider = GetComponentInChildren<CircleCollider2D>();
+            trigger = GetComponent<BoxCollider2D>();
             heart = GetComponent<Heart>();
             motor = GetComponent<CharacterMotor>();
+            dashTrail = GetComponentInChildren<TrailRenderer>();
+            dashTrail.enabled = false;
         }
 
         private void Start()
@@ -95,10 +101,12 @@ namespace TheLostTent
 
         IEnumerator DashNow(Vector3 dashDirection)
         {
+            dashTrail.enabled = true;
             Vector3 start = transform.position;
             Vector3 end = transform.position + dashDirection * dashDistance;
             isDashing = true;
             collider.enabled = false;
+            trigger.enabled = true;
             float journey = 0;
             while (journey <= dashDuration)
             {
@@ -107,7 +115,9 @@ namespace TheLostTent
                 transform.position = Vector3.Lerp(start, end, percent);
                 yield return null;
             }
+            trigger.enabled = false;
             collider.enabled = true;
+            dashTrail.enabled = false;
             yield return new WaitForSeconds(dashCooldown);
             isDashing = false;
         }
@@ -182,14 +192,12 @@ namespace TheLostTent
             }
         }
 
-        public void FaceOnClick()
+        private void OnTriggerEnter2D(Collider2D other)
         {
-
-        }
-
-        public void DetermineDirection()
-        {
-
+            if (other.tag == "Enemy")
+            {
+                other.GetComponentInParent<Heart>().Damage(attackPower * dashDamageMultiplier);
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ namespace TheLostTent
         public float attackRange = 0.5f;
         public float attackCooldown = 1f;
         public float nextWaypointDistance = .5f;
-        public float attackDuration = 0.5f;
+        public float attackDuration = .5f;
         protected bool isAttacking;
         protected Seeker seeker;
         protected Path path;
@@ -39,8 +39,9 @@ namespace TheLostTent
             motor = GetComponent<CharacterMotor>();
         }
 
-        private void Update()
+        protected void Update()
         {
+
             if (!isAttacking && Vector2.Distance(transform.position, target.position) <= attackRange)
             {
                 StartCoroutine(Attack());

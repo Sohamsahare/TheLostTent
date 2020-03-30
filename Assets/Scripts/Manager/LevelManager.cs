@@ -49,7 +49,7 @@ public class LevelManager : MonoBehaviour
         levelNum++;
         spawnCenter = playerTransform.position;
         // increase spawn amount linearly
-        spawnAmount = spawnAmount + (levelNum + 1);
+        int spawnAmount = this.spawnAmount + (levelNum + 2) % 3 + (int)2 * levelNum / 3;
 
         levelObj.text = levelTextPrefix + (levelNum + 1);
         Vector2[] spawnPostions = new Vector2[spawnAmount];
@@ -114,6 +114,8 @@ public class LevelManager : MonoBehaviour
                 return 0;
             case 1:
                 return 1;
+            case 2:
+                return 2;
             default:
                 return UnityEngine.Random.Range(0, enemyPrefabs.Length);
         }
