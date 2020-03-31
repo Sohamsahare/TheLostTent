@@ -15,6 +15,7 @@ namespace TheLostTent
         protected Path path;
         protected int currentWaypoint;
         protected bool hasReachedEndOfPath = false;
+        protected Pooler pooler;
         protected readonly string[] attackAnimations =
         {
             "Attack N",
@@ -35,6 +36,7 @@ namespace TheLostTent
         protected new void Awake()
         {
             base.Awake();
+            pooler = GameObject.FindGameObjectWithTag("Pooler").GetComponent<Pooler>();
             seeker = GetComponent<Seeker>();
             motor = GetComponent<CharacterMotor>();
         }

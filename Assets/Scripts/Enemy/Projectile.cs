@@ -7,10 +7,12 @@ namespace TheLostTent
         public float speed;
         private Vector2 direction;
         private Rigidbody2D rb;
+        private Pooler pooler;
 
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
+            pooler = GameObject.FindGameObjectWithTag("Pooler").GetComponent<Pooler>();
         }
 
         private void Start()
@@ -33,9 +35,8 @@ namespace TheLostTent
                 // Damage player
                 col.transform.GetComponentInParent<Witch>().TakeDamage(damage);
                 // run some anim if any
-                // and destroy afterwards
-                // TODO: Pool later on
-                Destroy(gameObject);
+                // and pool it back afterwards
+                pooler.DisableObj(Constants.PoolTags.Arrow, gameObject, 0);
             }
         }
     }

@@ -13,9 +13,11 @@ namespace TheLostTent
         private CircleCollider2D trigger2D;
         private Rigidbody2D rb;
         private Animator animator;
+        private Pooler pooler;
 
         private void Awake()
         {
+            pooler = GameObject.FindGameObjectWithTag("Pooler").GetComponent<Pooler>();
             rb = GetComponent<Rigidbody2D>();
             animator = GetComponent<Animator>();
             trigger2D = GetComponent<CircleCollider2D>();
@@ -35,7 +37,7 @@ namespace TheLostTent
             yield return new WaitForSeconds(afterEffectTime);
             trigger2D.enabled = false;
             // TODO: POOL
-            Destroy(gameObject);
+            pooler.DisableObj(Constants.PoolTags.Spell, gameObject, 0);
         }
 
         public void Initialise(float damage, float chargeTime, float afterEffectTime)
@@ -53,9 +55,8 @@ namespace TheLostTent
                 // Damage player
                 col.transform.GetComponentInParent<Witch>().TakeDamage(damage);
                 // run some anim if any
-                // and destroy afterwards
-                // TODO: Pool later on
-                Destroy(gameObject);
+                // and pool it back
+                pooler.DisableObj(Constants.PoolTags.Spell, gameObject, 0);
             }
         }
     }

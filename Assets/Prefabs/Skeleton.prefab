@@ -176,7 +176,7 @@ GameObject:
   - component: {fileID: 5641730305261256199}
   - component: {fileID: 8011105031685408385}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: Skeleton
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -247,7 +247,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   drawGizmos: 1
-  detailedGizmos: 0
+  detailedGizmos: 1
   startEndModifier:
     addPoints: 0
     exactStartPoint: 3

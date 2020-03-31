@@ -4,6 +4,12 @@ namespace TheLostTent
     public class Fireball : MonoBehaviour
     {
         public float damage = 10f;
+        private Pooler pooler;
+        private void Awake()
+        {
+
+            pooler = GameObject.FindGameObjectWithTag("Pooler").GetComponent<Pooler>();
+        }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
@@ -12,7 +18,7 @@ namespace TheLostTent
             {
                 // Damage enemy
                 other.GetComponentInParent<Heart>().Damage(damage);
-                Destroy(gameObject);
+                pooler.DisableObj(Constants.PoolTags.Fireball, gameObject, 0);
             }
         }
     }

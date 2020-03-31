@@ -20,10 +20,12 @@ namespace TheLostTent
         private Heart heart;
         CharacterMotor motor;
         private TrailRenderer dashTrail;
+        private Pooler pooler;
 
         private new void Awake()
         {
             base.Awake();
+            pooler = GameObject.FindGameObjectWithTag("Pooler").GetComponent<Pooler>();
             collider = GetComponentInChildren<CircleCollider2D>();
             trigger = GetComponent<BoxCollider2D>();
             heart = GetComponent<Heart>();
@@ -79,7 +81,7 @@ namespace TheLostTent
 
         public void Attack()
         {
-            var obj = Instantiate(fireballPrefab, transform.position, Quaternion.identity);
+            var obj = pooler.GetObject(Constants.PoolTags.Fireball, transform.position, Vector3Int.zero, transform);
             obj.GetComponent<Fireball>().damage = attackPower;
             var rb = obj.GetComponent<Rigidbody2D>();
             // var direction = DirectionFromString(isoRenderer.CurrentDirection);
@@ -88,7 +90,7 @@ namespace TheLostTent
             rb.AddForce(
                 (direction * attackSpeed)
             );
-            Destroy(obj, 3f);
+            pooler.DisableObj(Constants.PoolTags.Fireball, obj, 3f);
         }
 
         public void Dash(Vector3 dashDirection)

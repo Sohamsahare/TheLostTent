@@ -32,7 +32,7 @@ namespace TheLostTent
             isoRenderer.animator.Play("Die");
             GetComponentInChildren<CircleCollider2D>().enabled = false;
             yield return new WaitForSeconds(dieAnimation);
-            Destroy(gameObject);
+            pooler.DisableObj(Constants.PoolTags.Archer, gameObject, 0);
         }
 
         protected override void ProcessPath()
@@ -74,12 +74,14 @@ namespace TheLostTent
             int dir = CharacterRenderer.DirectionToIndex(direction, split);
             isoRenderer.animator.Play(attackAnimations[dir]);
             yield return new WaitForSeconds(attackDuration / 4);
-            // TODO: Add pooler
-            GameObject projectile = Instantiate(arrowPrefab, transform.position, Quaternion.Euler(45, 0, angle));
+
+            GameObject projectile = pooler.GetObject(Constants.PoolTags.Arrow, transform.position, new Vector3(45, 0, angle), transform);
             projectile.GetComponent<Projectile>().Initialise(damage, projectileSpeed, attackDirection);
-            // render animations
-            Destroy(projectile, 3f);
+            pooler.DisableObj(Constants.PoolTags.Arrow, projectile, 3f);
+
             float randomDelay = UnityEngine.Random.Range(0, maxAttackDelayRange);
+
+            // render animations
             yield return new WaitForSeconds(attackCooldown + randomDelay);
             isAttacking = false;
         }

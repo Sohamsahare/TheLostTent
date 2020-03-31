@@ -20,16 +20,23 @@ public class LevelManager : MonoBehaviour
     public float spawnAnimDuration = 1f;
     private float enemiesAlive = 0;
     private Vector2 spawnCenter;
-
     private int levelNum = -1;
     private bool isSpawning;
+    private Pooler pooler;
     private Transform playerTransform;
+    private string[] enemyTags;
     private void Awake()
     {
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        pooler = GameObject.FindGameObjectWithTag("Pooler").GetComponent<Pooler>();
     }
     private void Start()
     {
+        enemyTags = new string[] {
+            Constants.PoolTags.Skeleton,
+            Constants.PoolTags.Archer,
+            Constants.PoolTags.Mage
+        };
         levelNum = -1;
         isSpawning = false;
         textObj.text = enemiesAlive.ToString();
@@ -64,25 +71,23 @@ public class LevelManager : MonoBehaviour
         }
         // mark the end of spawn 
         yield return null;
-        Debug.Log("Enemies Alive - " + enemiesAlive);
+        // Debug.Log("Enemies Alive - " + enemiesAlive);
         isSpawning = false;
 
 
         void DoSpawnAnimation(int index)
         {
             var spawnpos = spawnPostions[index] = spawnCenter + UnityEngine.Random.insideUnitCircle * spawnRadius;
-            // TODO: Pool later
-            var obj = Instantiate(spawnAnimationPrefab, spawnpos, Quaternion.identity);
-            Destroy(obj, spawnAnimDuration);
+            var obj = pooler.GetObject(Constants.PoolTags.SpawnAnim, spawnpos, Vector3Int.zero, transform);
+            pooler.DisableObj(Constants.PoolTags.SpawnAnim, obj, spawnAnimDuration);
         }
 
         void SpawnEnemy(int index)
         {
             // find spawn position
             var spawnpos = spawnPostions[index];
-            var enemyIndex = GetEnemyIndex();
-            // instantiate enemy, TODO : Pool items later on
-            var obj = Instantiate(enemyPrefabs[enemyIndex], spawnpos, Quaternion.identity);
+            var enemyTag = GetEnemyTag();
+            var obj = pooler.GetObject(enemyTag, spawnpos, Vector3Int.zero);
 
             // set target as player
             obj.GetComponent<Enemy>().target = playerTransform;
@@ -106,18 +111,18 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    private int GetEnemyIndex()
+    private string GetEnemyTag()
     {
         switch (levelNum)
         {
             case 0:
-                return 0;
+                return enemyTags[0];
             case 1:
-                return 1;
+                return enemyTags[1];
             case 2:
-                return 2;
+                return enemyTags[2];
             default:
-                return UnityEngine.Random.Range(0, enemyPrefabs.Length);
+                return enemyTags[UnityEngine.Random.Range(0, enemyTags.Length)];
         }
     }
 }
