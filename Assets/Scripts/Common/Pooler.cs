@@ -6,6 +6,7 @@ using UnityEngine;
 public class Pooler : MonoBehaviour
 {
     private Dictionary<string, Queue<GameObject>> tagToPoolDictionary;
+    private Dictionary<string, GameObject> tagToPrefabDictionary;
     public ObjectPool[] objectPools;
 
     private void Start()
@@ -13,15 +14,25 @@ public class Pooler : MonoBehaviour
         InitialiseAllPools();
     }
 
-    public GameObject GetObject(string tag, Vector3 position, Vector3 rotation, Transform parent = null)
+    public GameObject RetrieveFromPool(string tag, Vector3 position, Vector3 rotation, Transform parent = null)
     {
         if (tagToPoolDictionary.ContainsKey(tag))
         {
             GameObject poolObj;
-            poolObj = tagToPoolDictionary[tag].Dequeue();
-            poolObj.transform.position = position;
-            poolObj.transform.eulerAngles = rotation;
-            poolObj.transform.SetParent(parent);
+            Queue<GameObject> queue = tagToPoolDictionary[tag];
+            if (queue.Count > 0)
+            {
+
+                poolObj = queue.Dequeue();
+                poolObj.transform.position = position;
+                poolObj.transform.eulerAngles = rotation;
+                poolObj.transform.SetParent(parent);
+            }
+            else
+            {
+                poolObj = Instantiate(tagToPrefabDictionary[tag], position, Quaternion.Euler(rotation), parent);
+                Debug.Log(tag + " Queue grew by 1");
+            }
             poolObj.SetActive(true);
             return poolObj;
         }
@@ -32,7 +43,7 @@ public class Pooler : MonoBehaviour
         }
     }
 
-    public void DisableObj(string tag, GameObject obj, float life = 0)
+    public void ReturnToPool(string tag, GameObject obj, float life = 0)
     {
         if (tagToPoolDictionary.ContainsKey(tag))
         {
@@ -58,6 +69,7 @@ public class Pooler : MonoBehaviour
     {
         // initialise dictionary
         tagToPoolDictionary = new Dictionary<string, Queue<GameObject>>();
+        tagToPrefabDictionary = new Dictionary<string, GameObject>();
 
         // generate objects for each pool and add them in respective queues
         // add the queue and the tag in dictionary
@@ -71,6 +83,7 @@ public class Pooler : MonoBehaviour
                 queue.Enqueue(clone);
             }
             tagToPoolDictionary.Add(pool.tag, queue);
+            tagToPrefabDictionary.Add(pool.tag, pool.prefab);
         }
     }
 

@@ -18,7 +18,7 @@ namespace TheLostTent
             {
                 // Damage enemy
                 other.GetComponentInParent<Heart>().Damage(damage);
-                pooler.DisableObj(Constants.PoolTags.Fireball, gameObject, 0);
+                pooler.ReturnToPool(Constants.PoolTags.Fireball, gameObject, 0);
             }
         }
     }

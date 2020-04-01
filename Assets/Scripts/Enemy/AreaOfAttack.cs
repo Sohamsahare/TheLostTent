@@ -37,7 +37,7 @@ namespace TheLostTent
             yield return new WaitForSeconds(afterEffectTime);
             trigger2D.enabled = false;
             // TODO: POOL
-            pooler.DisableObj(Constants.PoolTags.Spell, gameObject, 0);
+            pooler.ReturnToPool(Constants.PoolTags.Spell, gameObject, 0);
         }
 
         public void Initialise(float damage, float chargeTime, float afterEffectTime)
@@ -56,7 +56,7 @@ namespace TheLostTent
                 col.transform.GetComponentInParent<Witch>().TakeDamage(damage);
                 // run some anim if any
                 // and pool it back
-                pooler.DisableObj(Constants.PoolTags.Spell, gameObject, 0);
+                pooler.ReturnToPool(Constants.PoolTags.Spell, gameObject, 0);
             }
         }
     }

@@ -42,7 +42,7 @@ namespace TheLostTent
             isoRenderer.animator.Play("Die");
             GetComponentInChildren<CircleCollider2D>().enabled = false;
             yield return new WaitForSeconds(dieAnimation);
-            pooler.DisableObj(Constants.PoolTags.Mage, gameObject, 0);
+            pooler.ReturnToPool(Constants.PoolTags.Mage, gameObject, 0);
         }
 
         protected override void ProcessPath()
@@ -83,10 +83,10 @@ namespace TheLostTent
             int dir = CharacterRenderer.DirectionToIndex(direction, split);
             yield return new WaitForSeconds(randomDelay);
             // TODO: Add pooler
-            GameObject spellObj = pooler.GetObject(Constants.PoolTags.Spell, GetAttackPosition(), Vector3.zero, transform);
+            GameObject spellObj = pooler.RetrieveFromPool(Constants.PoolTags.Spell, GetAttackPosition(), Vector3.zero, transform);
             spellObj.transform.localScale = Vector3.one * attackRadius;
             spellObj.GetComponent<AreaOfAttack>().Initialise(damage, chargeTime, afterEffectTime);
-            pooler.DisableObj(Constants.PoolTags.Spell, spellObj, 3f);
+            pooler.ReturnToPool(Constants.PoolTags.Spell, spellObj, 3f);
             // render animations
             isoRenderer.animator.Play(attackAnimations[dir]);
             yield return new WaitForSeconds(attackCooldown);

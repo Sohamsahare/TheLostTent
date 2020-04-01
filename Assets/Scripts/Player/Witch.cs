@@ -81,7 +81,7 @@ namespace TheLostTent
 
         public void Attack()
         {
-            var obj = pooler.GetObject(Constants.PoolTags.Fireball, transform.position, Vector3Int.zero, transform);
+            var obj = pooler.RetrieveFromPool(Constants.PoolTags.Fireball, transform.position, Vector3Int.zero, transform);
             obj.GetComponent<Fireball>().damage = attackPower;
             var rb = obj.GetComponent<Rigidbody2D>();
             // var direction = DirectionFromString(isoRenderer.CurrentDirection);
@@ -90,7 +90,7 @@ namespace TheLostTent
             rb.AddForce(
                 (direction * attackSpeed)
             );
-            pooler.DisableObj(Constants.PoolTags.Fireball, obj, 3f);
+            pooler.ReturnToPool(Constants.PoolTags.Fireball, obj, 3f);
         }
 
         public void Dash(Vector3 dashDirection)

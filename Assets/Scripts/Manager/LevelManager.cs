@@ -78,8 +78,8 @@ public class LevelManager : MonoBehaviour
         void DoSpawnAnimation(int index)
         {
             var spawnpos = spawnPostions[index] = spawnCenter + UnityEngine.Random.insideUnitCircle * spawnRadius;
-            var obj = pooler.GetObject(Constants.PoolTags.SpawnAnim, spawnpos, Vector3Int.zero, transform);
-            pooler.DisableObj(Constants.PoolTags.SpawnAnim, obj, spawnAnimDuration);
+            var obj = pooler.RetrieveFromPool(Constants.PoolTags.SpawnAnim, spawnpos, Vector3Int.zero, transform);
+            pooler.ReturnToPool(Constants.PoolTags.SpawnAnim, obj, spawnAnimDuration);
         }
 
         void SpawnEnemy(int index)
@@ -87,7 +87,7 @@ public class LevelManager : MonoBehaviour
             // find spawn position
             var spawnpos = spawnPostions[index];
             var enemyTag = GetEnemyTag();
-            var obj = pooler.GetObject(enemyTag, spawnpos, Vector3Int.zero);
+            var obj = pooler.RetrieveFromPool(enemyTag, spawnpos, Vector3Int.zero);
 
             // set target as player
             obj.GetComponent<Enemy>().target = playerTransform;

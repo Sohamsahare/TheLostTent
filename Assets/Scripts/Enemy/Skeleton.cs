@@ -29,7 +29,7 @@ namespace TheLostTent
             isoRenderer.animator.Play("Die");
             GetComponentInChildren<CircleCollider2D>().enabled = false;
             yield return new WaitForSeconds(dieAnimation);
-            pooler.DisableObj(Constants.PoolTags.Skeleton, gameObject, 0);
+            pooler.ReturnToPool(Constants.PoolTags.Skeleton, gameObject, 0);
         }
 
         protected override void ProcessPath()

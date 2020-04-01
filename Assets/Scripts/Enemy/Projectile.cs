@@ -36,7 +36,7 @@ namespace TheLostTent
                 col.transform.GetComponentInParent<Witch>().TakeDamage(damage);
                 // run some anim if any
                 // and pool it back afterwards
-                pooler.DisableObj(Constants.PoolTags.Arrow, gameObject, 0);
+                pooler.ReturnToPool(Constants.PoolTags.Arrow, gameObject, 0);
             }
         }
     }
