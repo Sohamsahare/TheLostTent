@@ -93,6 +93,7 @@ namespace TheLostTent
             Vector2 rowStart = startPosition + colOffset * h;
             Vector2 rowTile = rowStart + w * rowOffset;
             rowTile.y += elevation * elevationOffset;
+            // return new Vector3(rowTile.x, rowTile.y, elevation * elevationOffset);
             return rowTile;
         }
 
@@ -113,11 +114,6 @@ namespace TheLostTent
                 tilemap.transform.SetParent(transform);
                 InstantiateTiles(current, levelMap, tilemap);
             }
-        }
-
-        private void PlaceColliders(Texture2D levelMap)
-        {
-            throw new NotImplementedException();
         }
 
         private void PlaceTiles(Texture2D levelMap, Vector2 startPosition)
@@ -168,7 +164,6 @@ namespace TheLostTent
                     }
                 }
             }
-            // PlaceColliders(levelMap);
         }
 
         private void InstantiateTiles(int current, Texture2D levelMap, GameObject tilemap)
@@ -186,7 +181,7 @@ namespace TheLostTent
                     if (colorToTileDictionary.ContainsKey(color))
                     {
                         TileEntry tileEntry = colorToTileDictionary[color];
-                        Vector2 position = getNextTilePosition(w, h, tileEntry.elevation);
+                        Vector3 position = getNextTilePosition(w, h, tileEntry.elevation);
                         GameObject tile = null;
                         switch (tileEntry.spawnType)
                         {

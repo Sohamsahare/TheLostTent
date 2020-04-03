@@ -40,21 +40,30 @@ public class LevelManager : MonoBehaviour
         levelNum = -1;
         isSpawning = false;
         textObj.text = enemiesAlive.ToString();
+        Invoke("SpawnNow", 0.1f);
+    }
+
+    void SpawnNow()
+    {
+        StartCoroutine(SpawnEnemies(playerTransform.position));
     }
 
     private void Update()
     {
-        if (enemiesAlive <= 0 && !isSpawning)
-        {
-            StartCoroutine(SpawnEnemies());
-        }
+        // if (enemiesAlive <= 0 && !isSpawning)
+        // {
+        // }
     }
 
-    IEnumerator SpawnEnemies()
+    public void SpawnAt(Vector2 position)
+    {
+        StartCoroutine(SpawnEnemies(position));
+    }
+
+    IEnumerator SpawnEnemies(Vector2 spawnCenter)
     {
         isSpawning = true;
         levelNum++;
-        spawnCenter = playerTransform.position;
         // increase spawn amount linearly
         int spawnAmount = this.spawnAmount + (levelNum + 2) % 3 + (int)2 * levelNum / 3;
 

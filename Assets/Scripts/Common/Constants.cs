@@ -1,6 +1,5 @@
 namespace TheLostTent
 {
-
     public static class Constants
     {
         public static class PoolTags

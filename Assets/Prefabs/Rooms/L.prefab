@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2514296088678970270
+--- !u!1 &4596724916883795154
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2514296088678970272}
-  - component: {fileID: 2514296088678970273}
+  - component: {fileID: 4280809241873785512}
+  - component: {fileID: 5511521447066305519}
   m_Layer: 0
-  m_Name: LevelManager
-  m_TagString: LevelManager
+  m_Name: L
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2514296088678970272
+--- !u!4 &4280809241873785512
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2514296088678970270}
+  m_GameObject: {fileID: 4596724916883795154}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -31,29 +31,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2514296088678970273
+--- !u!114 &5511521447066305519
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2514296088678970270}
+  m_GameObject: {fileID: 4596724916883795154}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48cba7b228fc5be46ae3dbb6ba9feb55, type: 3}
+  m_Script: {fileID: 11500000, guid: 11e3da8e9d4b16b44844cd55ad4d5136, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefabs:
-  - {fileID: 6839686905695159171, guid: 037329b6095141949a6a8854762d72e9, type: 3}
-  - {fileID: 4371087681798328710, guid: ff8070929e290a04080ac7c69a9640e1, type: 3}
-  spawnAnimationPrefab: {fileID: 2908812893769180473, guid: ce2d569cffaf4cc4a84651a0b7084ec6,
+  tileRowOffset: {x: 0.44, y: -0.25}
+  tileColumnOffset: {x: 0.432, y: 0.25}
+  elevationOffset: 0.24
+  roomLayout: {fileID: 2800000, guid: 6a76378d5759a9e4485984b0e038bcaa, type: 3}
+  Name: BTRL
+  triggerPrefab: {fileID: 4543768151550028223, guid: 194a370d4e761e943b52ca7dd11fc60c,
     type: 3}
-  cameraMain: {fileID: 0}
-  levelTextPrefix: 'Level -> '
-  textObj: {fileID: 0}
-  levelObj: {fileID: 0}
-  spawnAmount: 5
-  spawnRadius: 9
-  baseSpeed: 1
-  speedIncrement: 0.1
-  spawnAnimDuration: 3
+  walkableColor: {r: 1, g: 1, b: 0, a: 1}
