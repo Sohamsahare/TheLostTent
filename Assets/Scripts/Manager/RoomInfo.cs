@@ -7,9 +7,11 @@ public struct RoomInfo : IEquatable<RoomInfo>
     // public Transform transform;
     // public Vector2 spawnPosition { get { return transform.position; } }
     public Vector2 spawnPosition;
+    public GameObject roomObj;
 
-    public RoomInfo(string Name, Vector2 position)
+    public RoomInfo(string Name, Vector2 position, GameObject roomObj)
     {
+        this.roomObj = roomObj;
         this.Name = Name;
         // this.transform = transform;
         this.spawnPosition = position;

@@ -29,6 +29,7 @@ public class Room : MonoBehaviour
     // bright yellow
     private Color walkableColor = new Color(1, 1, 0, 1);
     private Transform roomsParent;
+    public bool isFirst = false;
 
     private void Awake()
     {
@@ -43,7 +44,8 @@ public class Room : MonoBehaviour
         // delay of 0.1 sec
         // so that we can see the map building
         // also roommanager start  function should get over by then
-        Invoke("BuildRoom", 0.05f);
+        // Invoke("BuildRoom", 0.05f);
+        BuildRoom();
     }
 
     private void ReadLayout()
@@ -68,21 +70,15 @@ public class Room : MonoBehaviour
     {
         startPosition = transform.position;
         Name = transform.name.Split('(')[0];
-        if (spawnNeighbours)
-        {
-            bool isValid = roomManager.RegisterRoom(Name, transform);
-            if (!isValid)
-            {
-                Debug.Log("Room already exists at this position hence destroying. Position => " + startPosition);
-                Destroy(gameObject);
-            }
-        }
         roomDimensions = new Vector3Int(roomLayout.width, roomLayout.height, 0);
         layoutAsColors = new Color[roomLayout.width, roomLayout.height];
-        Debug.Log("Room dimensions are -> " + roomDimensions);
         ReadLayout();
         InstantiateTiles();
         CreateTriggers();
+        // if (!isFirst)
+        // {
+        //     gameObject.SetActive(false);
+        // }
     }
 
     void CreateTriggers()
@@ -195,7 +191,7 @@ public class Room : MonoBehaviour
 
     private void InstantiateTiles()
     {
-        Debug.Log("LayoutasColors lengths " + layoutAsColors.GetLength(0) + "-" + layoutAsColors.GetLength(1));
+        // Debug.Log("LayoutasColors` lengths " + layoutAsColors.GetLength(0) + "-" + layoutAsColors.GetLength(1));
         // for each pixel in map
         for (int y = 0; y < layoutAsColors.GetLength(1); y++)
         {
@@ -264,16 +260,4 @@ public class Room : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.tag == "Room")
-        {
-            var isValid = roomManager.RegisterConflict(transform);
-            if (!isValid)
-            {
-                Debug.LogError("Two rooms were spawned over each other. Hence destroying -> " + other.gameObject);
-                Destroy(other.gameObject);
-            }
-        }
-    }
 }

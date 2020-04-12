@@ -10,7 +10,7 @@ public class RoomManagerEditor : Editor
         var tileManager = (RoomManager)target;
         if (GUILayout.Button("Spawn Room"))
         {
-            tileManager.SpawnRooms();
+            tileManager.CreateDungeon();
         }
     }
 }

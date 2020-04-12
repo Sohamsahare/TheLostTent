@@ -431,6 +431,15 @@ MonoBehaviour:
     tiles: []
     elevation: 1
     name: Indicator
+  layoutTexture: {fileID: 2800000, guid: 9f3d35b7ce8d26242a0ea913066158f9, type: 3}
+  roomDimension: 32
+  roomsPerRowInLayout: 4
+  roomsPerColInLayout: 4
+  roomWidth: 13.8
+  roomHeight: 8
+  maxRooms: 10
+  maxSpawnableRooms: 15
+  gridSize: {x: 4, y: 4}
   roomPrefabs:
   - {fileID: 4087509208766383686, guid: 6a1276c447848394bbf561ab3fa98f66, type: 3}
   - {fileID: 3461693313601350322, guid: 0f19f8dec9f6bcd48b4147f2dcff88f4, type: 3}
@@ -446,14 +455,7 @@ MonoBehaviour:
   - {fileID: 1851342019429580774, guid: 06c0b3f270975e440b7d5af77b0f7f84, type: 3}
   - {fileID: 1943497885125952929, guid: af9b422732403a44c9eec480b6e41fe6, type: 3}
   - {fileID: 5554255172930957818, guid: 710da84391c50db4fb1736eade272241, type: 3}
-  layoutTexture: {fileID: 2800000, guid: 9f3d35b7ce8d26242a0ea913066158f9, type: 3}
-  roomDimension: 32
-  roomsPerRowInLayout: 4
-  roomsPerColInLayout: 4
-  roomWidth: 13.8
-  roomHeight: 8
-  maxRooms: 10
-  maxSpawnableRooms: 15
+  - {fileID: 3245916159230646748, guid: 480692e8a43ee3a41a62ad19e6227a7f, type: 3}
   startRoom: BTRL
   startPosition: {x: 0, y: 0}
 --- !u!4 &194058069
@@ -1691,7 +1693,7 @@ PrefabInstance:
     - target: {fileID: 3245916159230646748, guid: 480692e8a43ee3a41a62ad19e6227a7f,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3245916159230646749, guid: 480692e8a43ee3a41a62ad19e6227a7f,
         type: 3}

@@ -79,11 +79,14 @@ public class ExitTrigger : MonoBehaviour
                 .FindGameObjectWithTag("RoomManager")
                 .GetComponent<RoomManager>();
 
+            // roomManager.EnableRoomAt(orientation);
+
             GameObject
                 .FindGameObjectWithTag("LevelManager")
                 .GetComponent<LevelManager>()
                 .RequestEnemiesAtRoom(parentRoom.transform.position, orientationChar, roomManager.roomWidth, roomManager.roomHeight);
-            // Destroy(gameObject);
+
+            Destroy(this);
         }
     }
 }

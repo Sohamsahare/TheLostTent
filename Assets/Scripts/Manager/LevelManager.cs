@@ -63,7 +63,7 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Was already spawning");
+            // Debug.LogWarning("Was already spawning");
         }
     }
 
