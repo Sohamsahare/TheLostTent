@@ -13,7 +13,7 @@ public class LevelManager : MonoBehaviour
     public string levelTextPrefix = "Level -> ";
     public TextMeshProUGUI textObj;
     public TextMeshProUGUI levelObj;
-    public int spawnAmount;
+    public int spawnAmount = 5;
     public float spawnRadius;
     public float baseSpeed = 1;
     public float speedIncrement = .2f;
@@ -57,7 +57,51 @@ public class LevelManager : MonoBehaviour
 
     public void SpawnAt(Vector2 position)
     {
-        StartCoroutine(SpawnEnemies(position));
+        if (!isSpawning)
+        {
+            StartCoroutine(SpawnEnemies(position));
+        }
+        else
+        {
+            Debug.LogWarning("Was already spawning");
+        }
+    }
+
+    public Vector2 GetNextRoomPosition(Vector2 roomCenterPosition, char direction, float roomWidth, float roomHeight)
+    {
+        Vector2 nextPosition = new Vector2(roomWidth, roomHeight);
+        switch (direction)
+        {
+            case 'L':
+                nextPosition.x *= 1;
+                nextPosition.y *= 1;
+                nextPosition += roomCenterPosition;
+                return nextPosition;
+            case 'R':
+                nextPosition.x *= -1;
+                nextPosition.y *= -1;
+                nextPosition += roomCenterPosition;
+                return nextPosition;
+            case 'T':
+                nextPosition.x *= 1;
+                nextPosition.y *= -1;
+                nextPosition += roomCenterPosition;
+                return nextPosition;
+            case 'B':
+                nextPosition.x *= -1;
+                nextPosition.y *= 1;
+                nextPosition += roomCenterPosition;
+                return nextPosition;
+            default:
+                Debug.Log("Next room position invalid! -> " + direction);
+                return nextPosition;
+        }
+    }
+
+    public void RequestEnemiesAtRoom(Vector2 roomPosition, char direction, float roomWidth, float roomHeight)
+    {
+        var nextPosition = GetNextRoomPosition(roomPosition, direction, roomWidth, roomHeight);
+        SpawnAt(nextPosition + new Vector2(roomWidth, 0));
     }
 
     IEnumerator SpawnEnemies(Vector2 spawnCenter)
@@ -65,7 +109,7 @@ public class LevelManager : MonoBehaviour
         isSpawning = true;
         levelNum++;
         // increase spawn amount linearly
-        int spawnAmount = this.spawnAmount + (levelNum + 2) % 3 + (int)2 * levelNum / 3;
+        int spawnAmount = this.spawnAmount + levelNum % 2;
 
         levelObj.text = levelTextPrefix + (levelNum + 1);
         Vector2[] spawnPostions = new Vector2[spawnAmount];

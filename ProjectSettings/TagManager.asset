@@ -8,6 +8,7 @@ TagManager:
   - Pooler
   - RoomManager
   - LevelManager
+  - Room
   layers:
   - Default
   - TransparentFX

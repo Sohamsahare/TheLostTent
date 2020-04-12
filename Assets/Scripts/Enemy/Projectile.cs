@@ -33,7 +33,7 @@ namespace TheLostTent
             {
                 Debug.Log("Collide with " + col.transform.name);
                 // Damage player
-                col.transform.GetComponentInParent<Witch>().TakeDamage(damage);
+                col.transform.GetComponent<Witch>().TakeDamage(damage);
                 // run some anim if any
                 // and pool it back afterwards
                 pooler.ReturnToPool(Constants.PoolTags.Arrow, gameObject, 0);

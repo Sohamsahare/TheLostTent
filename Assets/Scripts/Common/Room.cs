@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Room : MonoBehaviour
 {
+    public bool isTerminalRoom = false;
     // TODO: should be in tile class
     public Vector2 tileRowOffset = new Vector2(.44f, -.25f);
     public Vector2 tileColumnOffset = new Vector2(.432f, .25f);
@@ -13,8 +14,7 @@ public class Room : MonoBehaviour
     public float elevationOffset = .24f;
     public Texture2D roomLayout;
     public Color[,] layoutAsColors;
-    [HideInInspector]
-    public string Name;
+    public string Name { get; private set; }
     public GameObject triggerPrefab;
     public Vector2 centerPosition { get; private set; }
     // in case this room was generated linked to other room
@@ -42,7 +42,7 @@ public class Room : MonoBehaviour
         // delay of 0.1 sec
         // so that we can see the map building
         // also roommanager start  function should get over by then
-        Invoke("BuildRoom", 0.1f);
+        Invoke("BuildRoom", 0.05f);
     }
 
     private void ReadLayout()
@@ -65,9 +65,15 @@ public class Room : MonoBehaviour
 
     private void BuildRoom()
     {
-        Name = roomLayout.name;
-        roomDimensions = new Vector3Int(roomLayout.width, roomLayout.height, 0);
         startPosition = transform.position;
+        Name = transform.name.Split('(')[0];
+        bool isValid = roomManager.RegisterRoom(Name, transform);
+        if (!isValid)
+        {
+            Debug.Log("Room already exists at this position hence destroying. Position => " + startPosition);
+            Destroy(gameObject);
+        }
+        roomDimensions = new Vector3Int(roomLayout.width, roomLayout.height, 0);
         ReadLayout();
         InstantiateTiles();
         CreateTriggers();
@@ -75,8 +81,6 @@ public class Room : MonoBehaviour
 
     void CreateTriggers()
     {
-        Debug.Log("Creating triggers for room -> " + Name + " with ignore direction as " + ignoreTriggerDirection);
-
         // 2nd pixel row and 2nd last pixel row
         // first run consists of hori as R and vert as T
         // second run consists of hori as L and vert as B
@@ -112,17 +116,17 @@ public class Room : MonoBehaviour
         {
             var horiExitPoints = new List<Vector2>();
 
-            // ignore directions accordingly 
-            if (key == 1 && ignoreTriggerDirection == 'R')
-            {
-                Debug.Log("Ignore R Collider");
-                return horiExitPoints;
-            }
-            else if (key == 0 && ignoreTriggerDirection == 'L')
-            {
-                Debug.Log("Ignore L Collider");
-                return horiExitPoints;
-            }
+            // // ignore directions accordingly 
+            // if (key == 1 && ignoreTriggerDirection == 'R')
+            // {
+            //     Debug.Log("Ignore R Collider");
+            //     return horiExitPoints;
+            // }
+            // else if (key == 0 && ignoreTriggerDirection == 'L')
+            // {
+            //     Debug.Log("Ignore L Collider");
+            //     return horiExitPoints;
+            // }
 
             // if a walkable pixel is along the edge
             // add it into collider position so that 
@@ -145,17 +149,17 @@ public class Room : MonoBehaviour
         {
             var vertExitPoints = new List<Vector2>();
 
-            // ignore directions accordingly 
-            if (key == 1 && ignoreTriggerDirection == 'T')
-            {
-                Debug.Log("Ignore T Collider");
-                return vertExitPoints;
-            }
-            else if (key == 0 && ignoreTriggerDirection == 'B')
-            {
-                Debug.Log("Ignore B Collider");
-                return vertExitPoints;
-            }
+            // // ignore directions accordingly 
+            // if (key == 1 && ignoreTriggerDirection == 'T')
+            // {
+            //     Debug.Log("Ignore T Collider");
+            //     return vertExitPoints;
+            // }
+            // else if (key == 0 && ignoreTriggerDirection == 'B')
+            // {
+            //     Debug.Log("Ignore B Collider");
+            //     return vertExitPoints;
+            // }
 
             // if a walkable pixel is along the edge
             // add it into collider position so that 
@@ -180,7 +184,6 @@ public class Room : MonoBehaviour
         Vector2 rowStart = (Vector2)startPosition + tileColumnOffset * h;
         Vector2 rowTile = rowStart + w * tileRowOffset;
         rowTile.y += elevation * elevationOffset;
-        // return new Vector3(rowTile.x, rowTile.y, elevation * elevationOffset);
         return rowTile;
     }
 
@@ -197,9 +200,10 @@ public class Room : MonoBehaviour
                 // get position of spawn
                 // check if in dict
                 // get pixel value
+                // if (x == 1 || y == 1 || x == layoutAsColors.GetLength(1) - 2 || y == layoutAsColors.GetLength(0) - 2)
+                // {
                 InstantiateTileAt(tileEntry, nextPosition);
-
-
+                // }
 
                 // set center position
                 if (x == layoutAsColors.GetLength(1) / 2 && y == layoutAsColors.GetLength(0) / 2)
@@ -241,6 +245,19 @@ public class Room : MonoBehaviour
             else
             {
                 Debug.Log("Empty prefabs for tile " + tileEntry.color);
+            }
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Room")
+        {
+            var isValid = roomManager.RegisterConflict(transform);
+            if (!isValid)
+            {
+                Debug.LogError("Two rooms were spawned over each other. Hence destroying -> " + other.gameObject);
+                Destroy(other.gameObject);
             }
         }
     }

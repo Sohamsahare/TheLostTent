@@ -7,57 +7,15 @@ namespace TheLostTent
     {
         public float damage = 10f;
         public float dieAnimation = 1f;
-        private Heart heart;
         private bool isAttackAnimating = false;
 
-        private new void Awake()
-        {
-            base.Awake();
-            heart = GetComponent<Heart>();
-        }
-
-        private void Start()
-        {
-            InvokeRepeating("UpdatePath", 0f, .5f);
-            heart.SetStats(HP);
-            heart.deathEvent += () => StartCoroutine(Die());
-        }
-
-        IEnumerator Die()
+        protected override IEnumerator Die()
         {
             // play gfx
             isoRenderer.animator.Play("Die");
             GetComponentInChildren<CircleCollider2D>().enabled = false;
             yield return new WaitForSeconds(dieAnimation);
             pooler.ReturnToPool(Constants.PoolTags.Skeleton, gameObject, 0);
-        }
-
-        protected override void ProcessPath()
-        {
-            if (path == null || heart.IsDead || isAttackAnimating)
-            {
-                return;
-            }
-
-            if (currentWaypoint >= path.vectorPath.Count)
-            {
-                hasReachedEndOfPath = true;
-                return;
-            }
-            else
-            {
-                hasReachedEndOfPath = false;
-            }
-
-            direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
-            motor.Move(direction);
-            isoRenderer.SetDirection(direction);
-
-            float distance = Vector2.Distance(path.vectorPath[currentWaypoint], rb.position);
-            if (distance < nextWaypointDistance)
-            {
-                currentWaypoint++;
-            }
         }
 
         protected override IEnumerator Attack()

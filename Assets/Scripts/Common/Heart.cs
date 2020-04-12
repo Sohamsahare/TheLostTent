@@ -10,15 +10,11 @@ namespace TheLostTent
         {
             get
             {
-                if (character != null)
+                if (character == null)
                 {
-                    return character.HP;
+                    character = GetComponent<Character>();
                 }
-                else
-                {
-                    Debug.LogError("Character reference is null for " + transform.name);
-                    return -1;
-                }
+                return character.HP;
             }
         }
 
@@ -30,14 +26,11 @@ namespace TheLostTent
             }
             set
             {
-                if (character != null)
+                if (character == null)
                 {
-                    character.HP = value;
+                    character = GetComponent<Character>();
                 }
-                else
-                {
-                    Debug.LogError("Character reference is null for " + transform.name);
-                }
+                character.HP = value;
             }
         }
 
@@ -75,6 +68,11 @@ namespace TheLostTent
             dieActionDone = false;
             maxHp = hp;
             this.hp = hp;
+            if (sizeDelta == Vector2.zero)
+            {
+                sizeDelta = greenHPTransform.sizeDelta;
+            }
+            greenHPTransform.sizeDelta = sizeDelta;
         }
 
         public void Damage(float damage)

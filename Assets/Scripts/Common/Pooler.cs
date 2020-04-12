@@ -34,6 +34,11 @@ public class Pooler : MonoBehaviour
                 Debug.Log(tag + " Queue grew by 1");
             }
             poolObj.SetActive(true);
+            IPoolable poolable = poolObj.GetComponent<IPoolable>();
+            if (poolable != null)
+            {
+                poolable.ResetBehaviour();
+            }
             return poolObj;
         }
         else

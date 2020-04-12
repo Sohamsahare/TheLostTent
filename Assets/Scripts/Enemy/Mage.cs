@@ -13,64 +13,14 @@ namespace TheLostTent
         public float afterEffectTime = .5f;
         public float attackRadius = 2f;
         public GameObject attackPrefab;
-        private Heart heart;
 
-        private new void Awake()
-        {
-            base.Awake();
-            heart = GetComponent<Heart>();
-        }
-
-        private void Start()
-        {
-            InvokeRepeating("UpdatePath", 0f, .5f);
-            heart.SetStats(HP);
-            heart.deathEvent += () => StartCoroutine(Die());
-        }
-
-        protected new void Update()
-        {
-            if (!isAttacking && Vector2.Distance(transform.position, target.position) <= attackRange)
-            {
-                StartCoroutine(Attack());
-            }
-        }
-
-        IEnumerator Die()
+        protected override IEnumerator Die()
         {
             // play gfx
             isoRenderer.animator.Play("Die");
             GetComponentInChildren<CircleCollider2D>().enabled = false;
             yield return new WaitForSeconds(dieAnimation);
             pooler.ReturnToPool(Constants.PoolTags.Mage, gameObject, 0);
-        }
-
-        protected override void ProcessPath()
-        {
-            if (path == null || heart.IsDead || isAttacking)
-            {
-                return;
-            }
-
-            if (currentWaypoint >= path.vectorPath.Count)
-            {
-                hasReachedEndOfPath = true;
-                return;
-            }
-            else
-            {
-                hasReachedEndOfPath = false;
-            }
-
-            direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
-            motor.Move(direction);
-            isoRenderer.SetDirection(direction);
-
-            float distance = Vector2.Distance(path.vectorPath[currentWaypoint], rb.position);
-            if (distance < nextWaypointDistance)
-            {
-                currentWaypoint++;
-            }
         }
 
         protected override IEnumerator Attack()

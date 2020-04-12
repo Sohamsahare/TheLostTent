@@ -73,12 +73,17 @@ public class ExitTrigger : MonoBehaviour
             // enable next room 
             Char orientationChar = ' ';
             Char.TryParse(orientation.ToString(), out orientationChar);
-            Debug.LogWarning("Spawn Room Request");
-            GameObject
+            Debug.LogWarning("Passed trigger on " + transform.parent.name);
+
+            var roomManager = GameObject
                 .FindGameObjectWithTag("RoomManager")
-                .GetComponent<RoomManager>()
-                .RequestNeighbourRoom(parentRoom.transform.position, orientationChar);
-            Destroy(gameObject);
+                .GetComponent<RoomManager>();
+
+            GameObject
+                .FindGameObjectWithTag("LevelManager")
+                .GetComponent<LevelManager>()
+                .RequestEnemiesAtRoom(parentRoom.transform.position, orientationChar, roomManager.roomWidth, roomManager.roomHeight);
+            // Destroy(gameObject);
         }
     }
 }

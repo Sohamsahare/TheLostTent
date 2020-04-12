@@ -26,7 +26,7 @@ namespace TheLostTent
         {
             base.Awake();
             pooler = GameObject.FindGameObjectWithTag("Pooler").GetComponent<Pooler>();
-            collider = GetComponentInChildren<CircleCollider2D>();
+            collider = GetComponent<CircleCollider2D>();
             trigger = GetComponent<BoxCollider2D>();
             heart = GetComponent<Heart>();
             motor = GetComponent<CharacterMotor>();
@@ -36,7 +36,7 @@ namespace TheLostTent
 
         private void Start()
         {
-            heart.SetStats(HP);
+            heart.SetStats(maxHP);
             isDashing = false;
         }
 
