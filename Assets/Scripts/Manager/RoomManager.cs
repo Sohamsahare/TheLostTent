@@ -75,8 +75,7 @@ public class RoomManager : MonoBehaviour
 
         // Debug.Log("Spawning a " + roomDirectionType + " type in direction " + spawnDirection + " at " + nextPosition + " i.e. room -> " + nextRoomName);
         GameObject roomObj = Instantiate(nameToPrefabDictionary[nextRoomName], nextPosition, Quaternion.identity, transform);
-        // roomObj.GetComponent<Room>().ignoreTriggerDirection = roomDirectionType;
-
+        roomObj.GetComponent<Room>().ignoreTriggerDirection = roomDirectionType;
         // spawn enemies when requested
         // levelManager.SpawnAt(nextPosition + new Vector2(roomWidth, 0));
         // Debug.DrawRay(nextPosition + new Vector2(roomWidth, 0), Vector2.up, Color.red, 5f);

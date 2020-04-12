@@ -8,7 +8,7 @@ namespace TheLostTent
         public float attackDelayRange = 2f;
         public float damage = 30f;
         public float dieAnimation = 1f;
-        public float chargeTime = 2f;
+        public float chargeTime = 1f;
         public float randomRadius = 4f;
         public float afterEffectTime = .5f;
         public float attackRadius = 2f;
@@ -32,7 +32,6 @@ namespace TheLostTent
             Vector2 attackDirection = (target.position - transform.position).normalized;
             int dir = CharacterRenderer.DirectionToIndex(direction, split);
             yield return new WaitForSeconds(randomDelay);
-            // TODO: Add pooler
             GameObject spellObj = pooler.RetrieveFromPool(Constants.PoolTags.Spell, GetAttackPosition(), Vector3.zero, transform);
             spellObj.transform.localScale = Vector3.one * attackRadius;
             spellObj.GetComponent<AreaOfAttack>().Initialise(damage, chargeTime, afterEffectTime);

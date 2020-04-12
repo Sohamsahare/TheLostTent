@@ -6,6 +6,7 @@ using UnityEngine;
 public class Room : MonoBehaviour
 {
     public bool isTerminalRoom = false;
+    public bool spawnNeighbours = true;
     // TODO: should be in tile class
     public Vector2 tileRowOffset = new Vector2(.44f, -.25f);
     public Vector2 tileColumnOffset = new Vector2(.432f, .25f);
@@ -47,7 +48,7 @@ public class Room : MonoBehaviour
 
     private void ReadLayout()
     {
-        layoutAsColors = new Color[roomDimensions.x, roomDimensions.y];
+        // layoutAsColors = new Color[roomDimensions.x, roomDimensions.y];
         Color[] colors = roomLayout.GetPixels(0, 0, roomDimensions.x, roomDimensions.y);
 
         for (int index = 0, row = 0, col = 0; index < colors.Length; index++)
@@ -67,13 +68,18 @@ public class Room : MonoBehaviour
     {
         startPosition = transform.position;
         Name = transform.name.Split('(')[0];
-        bool isValid = roomManager.RegisterRoom(Name, transform);
-        if (!isValid)
+        if (spawnNeighbours)
         {
-            Debug.Log("Room already exists at this position hence destroying. Position => " + startPosition);
-            Destroy(gameObject);
+            bool isValid = roomManager.RegisterRoom(Name, transform);
+            if (!isValid)
+            {
+                Debug.Log("Room already exists at this position hence destroying. Position => " + startPosition);
+                Destroy(gameObject);
+            }
         }
         roomDimensions = new Vector3Int(roomLayout.width, roomLayout.height, 0);
+        layoutAsColors = new Color[roomLayout.width, roomLayout.height];
+        Debug.Log("Room dimensions are -> " + roomDimensions);
         ReadLayout();
         InstantiateTiles();
         CreateTriggers();
@@ -117,16 +123,16 @@ public class Room : MonoBehaviour
             var horiExitPoints = new List<Vector2>();
 
             // // ignore directions accordingly 
-            // if (key == 1 && ignoreTriggerDirection == 'R')
-            // {
-            //     Debug.Log("Ignore R Collider");
-            //     return horiExitPoints;
-            // }
-            // else if (key == 0 && ignoreTriggerDirection == 'L')
-            // {
-            //     Debug.Log("Ignore L Collider");
-            //     return horiExitPoints;
-            // }
+            if (key == 1 && ignoreTriggerDirection == 'R')
+            {
+                Debug.Log("Ignore R Collider");
+                return horiExitPoints;
+            }
+            else if (key == 0 && ignoreTriggerDirection == 'L')
+            {
+                Debug.Log("Ignore L Collider");
+                return horiExitPoints;
+            }
 
             // if a walkable pixel is along the edge
             // add it into collider position so that 
@@ -150,16 +156,16 @@ public class Room : MonoBehaviour
             var vertExitPoints = new List<Vector2>();
 
             // // ignore directions accordingly 
-            // if (key == 1 && ignoreTriggerDirection == 'T')
-            // {
-            //     Debug.Log("Ignore T Collider");
-            //     return vertExitPoints;
-            // }
-            // else if (key == 0 && ignoreTriggerDirection == 'B')
-            // {
-            //     Debug.Log("Ignore B Collider");
-            //     return vertExitPoints;
-            // }
+            if (key == 1 && ignoreTriggerDirection == 'T')
+            {
+                Debug.Log("Ignore T Collider");
+                return vertExitPoints;
+            }
+            else if (key == 0 && ignoreTriggerDirection == 'B')
+            {
+                Debug.Log("Ignore B Collider");
+                return vertExitPoints;
+            }
 
             // if a walkable pixel is along the edge
             // add it into collider position so that 
@@ -189,33 +195,42 @@ public class Room : MonoBehaviour
 
     private void InstantiateTiles()
     {
+        Debug.Log("LayoutasColors lengths " + layoutAsColors.GetLength(0) + "-" + layoutAsColors.GetLength(1));
         // for each pixel in map
-        for (int y = 0; y < layoutAsColors.GetLength(0); y++)
+        for (int y = 0; y < layoutAsColors.GetLength(1); y++)
         {
-            for (int x = 0; x < layoutAsColors.GetLength(1); x++)
+            for (int x = 0; x < layoutAsColors.GetLength(0); x++)
             {
-                Color color = layoutAsColors[x, y];
-                TileEntry tileEntry = roomManager.GetTile(color);
-                Vector3 nextPosition = getNextTilePosition(x, y, tileEntry.elevation);
-                // get position of spawn
-                // check if in dict
-                // get pixel value
-                // if (x == 1 || y == 1 || x == layoutAsColors.GetLength(1) - 2 || y == layoutAsColors.GetLength(0) - 2)
-                // {
-                InstantiateTileAt(tileEntry, nextPosition);
-                // }
-
-                // set center position
-                if (x == layoutAsColors.GetLength(1) / 2 && y == layoutAsColors.GetLength(0) / 2)
+                try
                 {
-                    centerPosition = getNextTilePosition(x, y, 0);
-                    // Debug.Log("Center position is " + centerPosition);
+                    Color color = layoutAsColors[x, y];
+                    TileEntry tileEntry = roomManager.GetTile(color);
+                    Vector3 nextPosition = getNextTilePosition(x, y, tileEntry.elevation);
+                    // get position of spawn
+                    // check if in dict
+                    // get pixel value
+                    // if (x == 1 || y == 1 || x == layoutAsColors.GetLength(1) - 2 || y == layoutAsColors.GetLength(0) - 2)
+                    // {
+                    InstantiateTileAt(tileEntry, nextPosition, x, y);
+                    // }
+
+                    // set center position
+                    if (x == layoutAsColors.GetLength(1) / 2 && y == layoutAsColors.GetLength(0) / 2)
+                    {
+                        centerPosition = getNextTilePosition(x, y, 0);
+                        // Debug.Log("Center position is " + centerPosition);
+                    }
+                }
+                catch (IndexOutOfRangeException e)
+                {
+                    Debug.Log("(x,y) => (" + x + "," + y + ")");
+                    Debug.Log(e.Message);
                 }
             }
 
         }
 
-        void InstantiateTileAt(TileEntry tileEntry, Vector3 position)
+        void InstantiateTileAt(TileEntry tileEntry, Vector3 position, int x, int y)
         {
             if (tileEntry.prefabs != null && tileEntry.prefabs.Length > 0)
             {
@@ -244,7 +259,7 @@ public class Room : MonoBehaviour
             }
             else
             {
-                Debug.Log("Empty prefabs for tile " + tileEntry.color);
+                Debug.Log("Empty prefabs for tile " + tileEntry.color + " at position (" + x + "," + y + ")");
             }
         }
     }
