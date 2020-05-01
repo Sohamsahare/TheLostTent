@@ -135,7 +135,7 @@ MonoBehaviour:
   damage: 30
   dieAnimation: 1
   chargeTime: 1
-  randomRadius: 2
+  randomRadius: 1
   afterEffectTime: 0.2
   attackRadius: 2
   attackPrefab: {fileID: 203617789378861027, guid: 6fbb0755e83e8e040971ab31d722ca98,

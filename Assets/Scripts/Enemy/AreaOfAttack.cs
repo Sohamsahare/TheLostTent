@@ -47,11 +47,11 @@ namespace TheLostTent
             this.afterEffectTime = afterEffectTime;
         }
 
-        private void OnTriggerEnter2D(Collider2D col)
+        private void OnTriggerStay2D(Collider2D col)
         {
             if (col.transform.tag == "Player")
             {
-                Debug.Log("Collide with " + col.transform.name);
+                // Debug.Log("Collide with " + col.transform.name);
                 // Damage player
                 col.transform.GetComponent<Witch>().TakeDamage(damage);
                 // run some anim if any

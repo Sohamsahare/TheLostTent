@@ -193,14 +193,17 @@ namespace TheLostTent
         public void TakeDamage(float damage)
         {
             heart.Damage(damage);
-            impulseSource.GenerateImpulse(Random.insideUnitSphere * impulseMagnitude);
-            // on death, reset level
+            Vector3 velocity = Random.insideUnitSphere * impulseMagnitude;
+            // kill the z-channel to avoid going below the 2d plane 
+            // where characters are spawned
+            velocity.z = 0;
+            // higher intensity if the player dies
             if (heart.IsDead)
             {
-                impulseSource.GenerateImpulse(Random.insideUnitSphere * impulseMagnitude * 2);
+                velocity *= 3;
             }
-            // SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            // levelManager.ResetLevel();
+            // create camera shake effect 
+            impulseSource.GenerateImpulse(velocity);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
