@@ -16,10 +16,11 @@ public class LevelManager : MonoBehaviour
     public TextMeshProUGUI levelObj;
     public int spawnAmount = 5;
     public float spawnRadius;
+    public float restartWaitDuration = 1f;
     public float baseSpeed = 1;
     public float speedIncrement = .2f;
     public float spawnAnimDuration = 1f;
-    private float enemiesAlive = 0;
+    private int enemiesAlive = 0;
     private Vector2 spawnCenter;
     private int levelNum = -1;
     private bool isSpawning;
@@ -173,14 +174,27 @@ public class LevelManager : MonoBehaviour
 
     public void ResetLevel()
     {
-        // delete all character
+        // start from first level
+        levelNum = -1;
+        enemiesAlive = 0;
+        StartCoroutine(ResetLevelCoroutine());
+    }
+
+    private IEnumerator ResetLevelCoroutine()
+    {
+        // disable all characters
+        playerTransform.localScale = Vector3.zero;
+
         foreach (GameObject character in characterObjs)
         {
             character.GetComponent<Enemy>().KillMe();
         }
         characterObjs = new List<GameObject>();
 
+        yield return new WaitForSecondsRealtime(restartWaitDuration);
+
         // reset player
+        playerTransform.localScale = Vector3.one;
         var witch = playerTransform.GetComponent<Witch>();
         witch.ResetAt(startPosition);
 

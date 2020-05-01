@@ -201,11 +201,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6606109307989621451, guid: f8816f3a8be47664aaa88ac6775c0c4b,
-        type: 3}
-      propertyPath: m_Lens.OrthographicSize
-      value: 4
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f8816f3a8be47664aaa88ac6775c0c4b, type: 3}
 --- !u!4 &1016245460278674077 stripped
