@@ -25,7 +25,6 @@ namespace TheLostTent
         };
 
         protected Vector2 direction;
-
         protected CharacterMotor motor;
         protected Heart heart;
 
@@ -137,14 +136,24 @@ namespace TheLostTent
             yield return null;
         }
 
+        public void KillMe()
+        {
+            StartCoroutine(Die());
+        }
+
         public void ResetBehaviour()
         {
             if (target != null)
             {
                 InvokeRepeating("UpdatePath", 0f, .5f);
             }
+            isAttacking = false;
             heart.SetStats(maxHP);
             GetComponentInChildren<CircleCollider2D>().enabled = true;
+        }
+        private void OnCollisionEnter2D(Collision2D other)
+        {
+            Debug.Log("Colliding with " + other.transform.name);
         }
     }
 }

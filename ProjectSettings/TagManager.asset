@@ -9,6 +9,7 @@ TagManager:
   - RoomManager
   - LevelManager
   - Room
+  - Tile
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - 
   - 
   - Obstacle
-  - 
+  - Character
   - 
   - 
   - 

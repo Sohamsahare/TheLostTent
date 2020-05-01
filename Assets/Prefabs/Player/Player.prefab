@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 231573984893641439}
   - component: {fileID: 6015307689874295980}
   - component: {fileID: 259037895803919214}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 6924673933036736390}
   - component: {fileID: 2022333742114617883}
   - component: {fileID: 8585911175718820388}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: RedHp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -184,7 +184,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4222214198555107376}
   - component: {fileID: 903579602808341425}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: DashTrail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -243,15 +243,24 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Time: 5
+  m_Time: 0.3
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 15
+    widthMultiplier: 0.2
     widthCurve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
+        value: 0.4134636
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.19276999
         value: 1
         inSlope: 0
         outSlope: 0
@@ -260,8 +269,8 @@ TrailRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 1
-        value: 0
+        time: 0.9959717
+        value: 0.038461685
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -303,10 +312,10 @@ TrailRenderer:
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0
-    textureMode: 0
+    textureMode: 1
     shadowBias: 0.5
     generateLightingData: 0
-  m_MinVertexDistance: 0.1
+  m_MinVertexDistance: 0.05
   m_Autodestruct: 0
   m_Emitting: 1
 --- !u!1 &5462798199932171915
@@ -319,9 +328,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6189936547050690130}
   - component: {fileID: 6359133354992531061}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: shadow-2
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -404,7 +413,8 @@ GameObject:
   - component: {fileID: 7749050902407918946}
   - component: {fileID: 299041482004379034}
   - component: {fileID: 3866441332518886258}
-  m_Layer: 0
+  - component: {fileID: 6724982002567861242}
+  m_Layer: 9
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -551,6 +561,47 @@ CircleCollider2D:
   m_Offset: {x: -0.01, y: 0}
   serializedVersion: 2
   m_Radius: 0.1
+--- !u!114 &6724982002567861242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8495762201499702741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ImpulseDefinition:
+    m_ImpulseChannel: 1
+    m_RawSignal: {fileID: 0}
+    m_AmplitudeGain: 1
+    m_FrequencyGain: 1
+    m_RepeatMode: 0
+    m_Randomize: 1
+    m_TimeEnvelope:
+      m_AttackShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_DecayShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_AttackTime: 0
+      m_SustainTime: 0.2
+      m_DecayTime: 0.7
+      m_ScaleWithImpact: 1
+      m_HoldForever: 0
+    m_ImpactRadius: 100
+    m_DirectionMode: 0
+    m_DissipationMode: 2
+    m_DissipationDistance: 1000
 --- !u!1 &8495762202327262345
 GameObject:
   m_ObjectHideFlags: 0
@@ -563,7 +614,7 @@ GameObject:
   - component: {fileID: 8495762202327262357}
   - component: {fileID: 8495762202327262356}
   - component: {fileID: 8495762202327262347}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: WitchRender
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -674,7 +725,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8495762202743016890}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: WitchGFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -707,7 +758,7 @@ GameObject:
   - component: {fileID: 6340917081830818140}
   - component: {fileID: 7988117683963788423}
   - component: {fileID: 6687195023309831125}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: GreenHP
   m_TagString: Untagged
   m_Icon: {fileID: 0}

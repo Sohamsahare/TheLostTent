@@ -6,12 +6,12 @@ using UnityEngine;
 public class ExitTrigger : MonoBehaviour
 {
     // public string Direction 
-    private Room parentRoom;
+    private RoomBuilder parentRoom;
     private List<Vector2> triggerPoints;
     public ExitOrientation orientation { get; private set; }
     private void Awake()
     {
-        parentRoom = GetComponentInParent<Room>();
+        parentRoom = GetComponentInParent<RoomBuilder>();
     }
     public void Initialize(List<Vector2> triggerPoints)
     {

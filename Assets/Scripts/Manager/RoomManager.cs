@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
+using TheLostTent;
 
 public class RoomManager : MonoBehaviour
 {
@@ -14,8 +16,8 @@ public class RoomManager : MonoBehaviour
     public int roomsPerColInLayout = 4;
     public float roomWidth = 13.83f;
     public float roomHeight = 8;
-    public int maxRooms = 14;
     public int maxSpawnableRooms = 5;
+    private int spawnedRooms = 0;
     public Vector2Int gridSize = new Vector2Int(4, 4);
 
     [SerializeField]
@@ -35,6 +37,49 @@ public class RoomManager : MonoBehaviour
     private LevelManager levelManager;
     private HashSet<Vector2> conflictPositions;
     private Vector2Int currentGridPosition;
+    [SerializeField]
+    private int virtualCameraPriority = 99999;
+    private Transform playerTransform;
+    private Vector2Int lastRoom;
+
+    private void Awake()
+    {
+        levelManager = GameObject.FindGameObjectWithTag("LevelManager").GetComponent<LevelManager>();
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+
+    private void Start()
+    {
+        roomInfos = new HashSet<RoomInfo>();
+        conflictPositions = new HashSet<Vector2>();
+        playerTransform.GetComponentInChildren<Heart>().deathEvent += () =>
+        {
+            virtualCameraPriority += 2;
+            rooms[gridSize.x, gridSize.y].camera.Priority = virtualCameraPriority;
+        };
+        CreateDungeon();
+        Debug.Log("We have " + roomPrefabs.Length + " room prefabs");
+    }
+
+    public void setCurrentRoom(Vector2Int gridPos)
+    {
+        // set camera priority to display that room
+        if (gridPos.x < rooms.GetLength(0) && gridPos.y < rooms.GetLength(1))
+        {
+            RoomInfo roomInfo = rooms[gridPos.x, gridPos.y];
+            CinemachineVirtualCamera camera = roomInfo.camera;
+            // increase priority ot override last camera which is displaying
+            if (!lastRoom.Equals(gridPos))
+            {
+                virtualCameraPriority += 2;
+                camera.Priority = virtualCameraPriority;
+                Debug.Log($"Increasing priority {virtualCameraPriority} and changing current room at {gridPos}");
+            }
+            lastRoom = gridPos;
+        }
+
+    }
+
 
     public Vector2 GetNextRoomPosition(Vector2 roomCenterPosition, char direction)
     {
@@ -134,19 +179,6 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    private void Awake()
-    {
-        levelManager = GameObject.FindGameObjectWithTag("LevelManager").GetComponent<LevelManager>();
-    }
-
-    private void Start()
-    {
-        roomInfos = new HashSet<RoomInfo>();
-        conflictPositions = new HashSet<Vector2>();
-        CreateDungeon();
-        Debug.Log("We have " + roomPrefabs.Length + " room prefabs");
-    }
-
     // Initialises all variables and spawns rooms in a recursive manner 
     public void CreateDungeon()
     {
@@ -161,15 +193,31 @@ public class RoomManager : MonoBehaviour
         // initialise starting room
         SpawnRoomRecursive(startRoom, gridPosition, startPosition, true);
     }
-
-    private void SpawnRoomRecursive(string roomName, Vector2Int gridPosition, Vector2 roomPosition, bool isFirstRoom = false)
+    void SpawnRoomRecursive(string roomName, Vector2Int gridPosition, Vector2 roomPosition, bool isFirstRoom = false)
     {
+        // instantiate room
         GameObject roomObj = Instantiate(nameToPrefabDictionary[roomName], roomPosition, Quaternion.identity, transform);
-        // if (isFirstRoom)
-        // {
-        //     roomObj.GetComponent<Room>().isFirst = isFirstRoom;
-        // }
-        rooms[gridPosition.x, gridPosition.y] = new RoomInfo(roomName, roomPosition, roomObj);
+        roomObj.GetComponent<RoomBuilder>().SetGridPosition(gridPosition);
+
+        // intialize virtual camera 
+        CinemachineVirtualCamera camera = roomObj.GetComponentInChildren<CinemachineVirtualCamera>();
+        if (isFirstRoom)
+        {
+            // enable first room camera first
+            camera.Priority = virtualCameraPriority + 1;
+            lastRoom = gridPosition;
+        }
+        else
+        {
+            // lesser priority will ignore the camera's view
+            camera.Priority = virtualCameraPriority;
+        }
+        // follow player transform
+        // camera.Follow = playerTransform;
+
+        rooms[gridPosition.x, gridPosition.y] = new RoomInfo(roomName, roomPosition, roomObj, camera);
+
+        spawnedRooms++;
 
         foreach (char direction in roomName)
         {
@@ -187,7 +235,11 @@ public class RoomManager : MonoBehaviour
                     List<string> possibleRooms = directionToRoomNameDictionary[oppositeDirection];
                     string nextRoomName = possibleRooms[UnityEngine.Random.Range(0, possibleRooms.Count)];
 
-                    SpawnRoomRecursive(nextRoomName, nextGridPosition, nextPosition);
+                    if (spawnedRooms < maxSpawnableRooms)
+                    {
+                        // Debug.Log($"Spawning {nextRoomName} of type {oppositeDirection} at grid {nextGridPosition} to join in direction {direction} for gridPos {gridPosition}");
+                        SpawnRoomRecursive(nextRoomName, nextGridPosition, nextPosition);
+                    }
                 }
                 else
                 {
@@ -197,7 +249,7 @@ public class RoomManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("Invalid grid position to place a room");
+                Debug.Log("Invalid grid position to place a room " + nextGridPosition);
             }
         }
     }
@@ -214,10 +266,10 @@ public class RoomManager : MonoBehaviour
             case 'T':
                 nextGridPosition += Vector2Int.up;
                 break;
-            case 'R':
+            case 'L':
                 nextGridPosition += Vector2Int.right;
                 break;
-            case 'L':
+            case 'R':
                 nextGridPosition += Vector2Int.left;
                 break;
             default:
@@ -274,7 +326,7 @@ public class RoomManager : MonoBehaviour
 
         // get room directions
         int currentRoomNumber = 0;
-        while (currentRoomNumber < maxRooms)
+        while (currentRoomNumber < roomNames.Count)
         {
             string roomName = roomNames[currentRoomNumber];
             RegisterRoomAsPerDirection(roomName);

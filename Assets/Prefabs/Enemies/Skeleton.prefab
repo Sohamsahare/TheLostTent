@@ -1,52 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &475
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 506}
-  - component: {fileID: 541}
-  m_Layer: 0
-  m_Name: Collider
-  m_TagString: Enemy
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &506
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 475}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.061, y: -0.263, z: 0}
-  m_LocalScale: {x: 0.16434272, y: 0.16434272, z: 0.16434272}
-  m_Children: []
-  m_Father: {fileID: 529}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!58 &541
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 475}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.5
 --- !u!1 &477
 GameObject:
   m_ObjectHideFlags: 0
@@ -59,7 +12,7 @@ GameObject:
   - component: {fileID: 563}
   - component: {fileID: 629}
   - component: {fileID: 551}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SkeletonGFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -175,6 +128,7 @@ GameObject:
   - component: {fileID: 613}
   - component: {fileID: 614}
   - component: {fileID: 628}
+  - component: {fileID: 182414196892540980}
   m_Layer: 0
   m_Name: Skeleton
   m_TagString: Enemy
@@ -194,7 +148,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 523}
-  - {fileID: 506}
   - {fileID: 2195269083400870847}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -294,6 +247,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   greenHPTransform: {fileID: 4202714083666377415}
+--- !u!58 &182414196892540980
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 492}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.03, y: -0.26}
+  serializedVersion: 2
+  m_Radius: 0.1
 --- !u!1001 &3567583878163978947
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -344,7 +313,7 @@ PrefabInstance:
     - target: {fileID: 3455865355243503996, guid: 3e2416d2997e26546baa0840861891d9,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3455865355243503996, guid: 3e2416d2997e26546baa0840861891d9,
         type: 3}

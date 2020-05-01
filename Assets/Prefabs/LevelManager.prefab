@@ -44,7 +44,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefabs:
-  - {fileID: 6839686905695159171, guid: 037329b6095141949a6a8854762d72e9, type: 3}
+  - {fileID: 465, guid: 307ecd54f79e0af44bf692b7ea32c536, type: 3}
+  - {fileID: 492, guid: 037329b6095141949a6a8854762d72e9, type: 3}
   - {fileID: 4371087681798328710, guid: ff8070929e290a04080ac7c69a9640e1, type: 3}
   spawnAnimationPrefab: {fileID: 2908812893769180473, guid: ce2d569cffaf4cc4a84651a0b7084ec6,
     type: 3}
@@ -52,8 +53,8 @@ MonoBehaviour:
   levelTextPrefix: 'Level -> '
   textObj: {fileID: 0}
   levelObj: {fileID: 0}
-  spawnAmount: 5
-  spawnRadius: 9
-  baseSpeed: 1
-  speedIncrement: 0.1
+  spawnAmount: 4
+  spawnRadius: 3
+  baseSpeed: 1.25
+  speedIncrement: 0.2
   spawnAnimDuration: 3

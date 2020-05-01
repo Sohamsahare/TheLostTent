@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -21,16 +22,21 @@ namespace TheLostTent
         CharacterMotor motor;
         private TrailRenderer dashTrail;
         private Pooler pooler;
+        private LevelManager levelManager;
+        private CinemachineImpulseSource impulseSource;
+        public float impulseMagnitude = 1;
 
         private new void Awake()
         {
             base.Awake();
+            levelManager = GameObject.FindGameObjectWithTag("LevelManager").GetComponent<LevelManager>();
             pooler = GameObject.FindGameObjectWithTag("Pooler").GetComponent<Pooler>();
             collider = GetComponent<CircleCollider2D>();
             trigger = GetComponent<BoxCollider2D>();
             heart = GetComponent<Heart>();
             motor = GetComponent<CharacterMotor>();
             dashTrail = GetComponentInChildren<TrailRenderer>();
+            impulseSource = GetComponent<CinemachineImpulseSource>();
             dashTrail.enabled = false;
         }
 
@@ -187,11 +193,14 @@ namespace TheLostTent
         public void TakeDamage(float damage)
         {
             heart.Damage(damage);
-            cameraShake.ShakeOnce();
+            impulseSource.GenerateImpulse(Random.insideUnitSphere * impulseMagnitude);
+            // on death, reset level
             if (heart.IsDead)
             {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                impulseSource.GenerateImpulse(Random.insideUnitSphere * impulseMagnitude * 2);
             }
+            // SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            // levelManager.ResetLevel();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -200,6 +209,14 @@ namespace TheLostTent
             {
                 other.GetComponentInParent<Heart>().Damage(attackPower * dashDamageMultiplier);
             }
+        }
+
+        public void ResetAt(Vector2 position)
+        {
+            Debug.Log($"Player reset hp back to {maxHP}");
+            heart.SetStats(maxHP);
+            isDashing = false;
+            transform.position = position;
         }
     }
 }

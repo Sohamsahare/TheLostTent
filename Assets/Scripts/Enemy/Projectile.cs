@@ -15,16 +15,12 @@ namespace TheLostTent
             pooler = GameObject.FindGameObjectWithTag("Pooler").GetComponent<Pooler>();
         }
 
-        private void Start()
-        {
-            rb.AddForce(direction * speed);
-        }
-
         public void Initialise(float damage, float speed, Vector2 direction)
         {
             this.damage = damage;
             this.speed = speed;
             this.direction = direction;
+            rb.AddForce(direction * speed);
         }
 
         private void OnTriggerEnter2D(Collider2D col)

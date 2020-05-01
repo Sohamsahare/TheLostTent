@@ -41,7 +41,22 @@ namespace TheLostTent
                 return (hp <= 0);
             }
         }
-        private bool dieActionDone;
+        private bool _dieAction;
+        private bool dieActionDone
+        {
+            get
+            {
+                return _dieAction;
+            }
+            set
+            {
+                // if (transform.tag == "Player")
+                // {
+                //     Debug.Log($"Die action for {transform.name} is set to {value}");
+                // }
+                _dieAction = value;
+            }
+        }
 
         public delegate void Death();
         public event Death deathEvent;
@@ -49,7 +64,7 @@ namespace TheLostTent
         public RectTransform greenHPTransform;
 
         private CharacterRenderer characterRenderer;
-        private Vector2 sizeDelta;
+        private Vector2 initValue;
         private float maxHp;
 
         private void Awake()
@@ -60,7 +75,7 @@ namespace TheLostTent
 
         private void Start()
         {
-            sizeDelta = greenHPTransform.sizeDelta;
+            initValue = greenHPTransform.sizeDelta;
         }
 
         public void SetStats(float hp)
@@ -68,25 +83,33 @@ namespace TheLostTent
             dieActionDone = false;
             maxHp = hp;
             this.hp = hp;
-            if (sizeDelta == Vector2.zero)
+            if (initValue == Vector2.zero)
             {
-                sizeDelta = greenHPTransform.sizeDelta;
+                initValue = greenHPTransform.sizeDelta;
             }
-            greenHPTransform.sizeDelta = sizeDelta;
+            greenHPTransform.sizeDelta = initValue;
+            // if (transform.tag == "Player")
+            // {
+            //     Debug.Log($"{transform.name}'s heart set to {hp}");
+            // }
         }
 
         public void Damage(float damage)
         {
             hp = Mathf.Clamp(hp - damage, 0, maxHp);
             float percent = hp / maxHp;
-            greenHPTransform.sizeDelta = new Vector2(sizeDelta.x * percent, sizeDelta.y);
+            greenHPTransform.sizeDelta = new Vector2(initValue.x * percent, initValue.y);
             if (hp <= 0 && !dieActionDone)
             {
                 // fire death event
                 if (deathEvent != null)
                 {
-                    deathEvent();
                     dieActionDone = true;
+                    deathEvent();
+                }
+                else
+                {
+                    Debug.Log("Deathevent is null for " + transform.name);
                 }
             }
         }

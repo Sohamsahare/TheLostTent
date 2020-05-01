@@ -4,6 +4,7 @@ using UnityEngine;
 using TheLostTent;
 using TMPro;
 using System;
+using System.Linq;
 
 public class LevelManager : MonoBehaviour
 {
@@ -24,7 +25,10 @@ public class LevelManager : MonoBehaviour
     private bool isSpawning;
     private Pooler pooler;
     private Transform playerTransform;
-    private string[] enemyTags;
+    private List<string> enemyTags;
+    private List<GameObject> characterObjs;
+    [SerializeField]
+    private Vector2 startPosition = new Vector2(13, 6);
     private void Awake()
     {
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
@@ -32,14 +36,15 @@ public class LevelManager : MonoBehaviour
     }
     private void Start()
     {
-        enemyTags = new string[] {
-            Constants.PoolTags.Skeleton,
-            Constants.PoolTags.Archer,
-            Constants.PoolTags.Mage
-        };
+        enemyTags = new List<string>(enemyPrefabs.Select(x => x.name));
+        characterObjs = new List<GameObject>();
         levelNum = -1;
         isSpawning = false;
         textObj.text = enemiesAlive.ToString();
+        playerTransform.GetComponentInChildren<Heart>().deathEvent += () =>
+        {
+            ResetLevel();
+        };
         Invoke("SpawnNow", 0.1f);
     }
 
@@ -140,28 +145,47 @@ public class LevelManager : MonoBehaviour
             // find spawn position
             var spawnpos = spawnPostions[index];
             var enemyTag = GetEnemyTag();
-            var obj = pooler.RetrieveFromPool(enemyTag, spawnpos, Vector3Int.zero);
+            var enemyObj = pooler.RetrieveFromPool(enemyTag, spawnpos, Vector3Int.zero);
 
             // set target as player
-            obj.GetComponent<Enemy>().target = playerTransform;
+            enemyObj.GetComponent<Enemy>().target = playerTransform;
 
             // set world camera 
-            obj.GetComponentInChildren<Canvas>().worldCamera = cameraMain;
+            enemyObj.GetComponentInChildren<Canvas>().worldCamera = cameraMain;
 
             // increase enemy count as we spawned one
             enemiesAlive++;
             textObj.text = enemiesAlive.ToString();
+            characterObjs.Add(enemyObj);
 
             // on death decrease enemy count
-            obj.GetComponent<Heart>().deathEvent += () =>
+            enemyObj.GetComponent<Heart>().deathEvent += () =>
             {
                 enemiesAlive--;
                 textObj.text = enemiesAlive.ToString();
+                characterObjs.Remove(enemyObj);
                 Debug.Log("Enemies Alive - " + enemiesAlive);
             };
             // set enemy movement speed
-            obj.GetComponent<CharacterMotor>().movementSpeed = baseSpeed + levelNum * speedIncrement;
+            enemyObj.GetComponent<CharacterMotor>().movementSpeed = baseSpeed + levelNum * speedIncrement;
         }
+    }
+
+    public void ResetLevel()
+    {
+        // delete all character
+        foreach (GameObject character in characterObjs)
+        {
+            character.GetComponent<Enemy>().KillMe();
+        }
+        characterObjs = new List<GameObject>();
+
+        // reset player
+        var witch = playerTransform.GetComponent<Witch>();
+        witch.ResetAt(startPosition);
+
+        // spawn characters
+        SpawnAt(startPosition);
     }
 
     private string GetEnemyTag()
@@ -175,7 +199,7 @@ public class LevelManager : MonoBehaviour
             case 2:
                 return enemyTags[2];
             default:
-                return enemyTags[UnityEngine.Random.Range(0, enemyTags.Length)];
+                return enemyTags[UnityEngine.Random.Range(0, enemyTags.Count)];
         }
     }
 }

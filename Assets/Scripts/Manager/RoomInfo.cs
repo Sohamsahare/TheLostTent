@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Cinemachine;
 
 public struct RoomInfo : IEquatable<RoomInfo>
 {
@@ -7,12 +8,14 @@ public struct RoomInfo : IEquatable<RoomInfo>
     // public Transform transform;
     // public Vector2 spawnPosition { get { return transform.position; } }
     public Vector2 spawnPosition;
+    public CinemachineVirtualCamera camera;
     public GameObject roomObj;
 
-    public RoomInfo(string Name, Vector2 position, GameObject roomObj)
+    public RoomInfo(string Name, Vector2 position, GameObject roomObj, CinemachineVirtualCamera camera)
     {
         this.roomObj = roomObj;
         this.Name = Name;
+        this.camera = camera;
         // this.transform = transform;
         this.spawnPosition = position;
     }

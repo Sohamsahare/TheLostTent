@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 1344291386360385663}
   - component: {fileID: 2898853311912016224}
   - component: {fileID: 203617789378861028}
-  m_Layer: 0
-  m_Name: Area
+  m_Layer: 9
+  m_Name: Spell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
