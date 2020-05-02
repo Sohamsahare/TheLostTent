@@ -66,7 +66,7 @@ public class CompositeColliderHandler : MonoBehaviour
             {
                 // Debug.LogWarning("Enemies already spawned at " + centerPosition);
             }
-            roomManager.setCurrentRoom(gridPosition);
+            roomManager.SetCurrentRoom(gridPosition);
         }
     }
 }

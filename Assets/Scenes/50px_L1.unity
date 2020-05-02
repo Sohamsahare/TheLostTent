@@ -297,7 +297,7 @@ MonoBehaviour:
   roomsPerColInLayout: 4
   roomWidth: 7.25
   roomHeight: 4.25
-  maxSpawnableRooms: 8
+  maxSpawnableRooms: 50
   gridSize: {x: 4, y: 4}
   roomPrefabs:
   - {fileID: 7945047796510461081, guid: 077de26e89668e54390f9601adecc9ba, type: 3}
@@ -318,6 +318,7 @@ MonoBehaviour:
   startRoom: BTRL
   startPosition: {x: 0, y: 0}
   virtualCameraPriority: 1
+  incrementalProbability: 0.33
 --- !u!4 &194058069
 Transform:
   m_ObjectHideFlags: 0

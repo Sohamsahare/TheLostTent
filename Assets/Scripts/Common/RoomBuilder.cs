@@ -58,26 +58,26 @@ public class RoomBuilder : MonoBehaviour
         // layoutAsColors = new Color[roomDimensions.x, roomDimensions.y];
         Color[] colors = roomLayout.GetPixels(0, 0, roomDimensions.x, roomDimensions.y);
 
-        for (int index = 0, row = 0, col = 0; index < colors.Length; index += downSizeBy)
+        for (int index = 0, col = 0, row = 0; index < colors.Length; index += downSizeBy)
         {
             if (index != 0 && ((index / downSizeBy) % roomDimensions.x == 0))
             {
-                // start new row
-                Debug.Log($"Incrementing row to {row} at index {index}");
-                row++;
+                // start new col
+                // Debug.Log($"Incrementing col to {col} at index {index}");
+                col++;
             }
-            col = (index / downSizeBy) % roomDimensions.y;
+            row = (index / downSizeBy) % roomDimensions.y;
             try
             {
                 layoutAsColors[row, col] = colors[index];
             }
-            catch (IndexOutOfRangeException e)
+            catch (IndexOutOfRangeException)
             {
-                // Debug.Log($"assinging color {colors[index]} at ({row},{col}) with size ({layoutAsColors.GetLength(0)},{layoutAsColors.GetLength(1)})");
+                // Debug.LogWarning($"Assinging color {colors[index]} at ({row},{col}) with size ({layoutAsColors.GetLength(0)},{layoutAsColors.GetLength(1)}) to " + transform.name);
             }
             catch (Exception e)
             {
-                Debug.Log(e.Message);
+                Debug.LogWarning(e);
             }
         }
     }

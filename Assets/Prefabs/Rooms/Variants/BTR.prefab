@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 5910410400066454306, guid: de342bf20e4ec36429de0390dfca3048,
         type: 3}
       propertyPath: m_Name
-      value: BTR
+      value: BTL
       objectReference: {fileID: 0}
     - target: {fileID: 7257996816068926110, guid: de342bf20e4ec36429de0390dfca3048,
         type: 3}
@@ -71,7 +71,7 @@ PrefabInstance:
         type: 3}
       propertyPath: roomLayout
       value: 
-      objectReference: {fileID: 2800000, guid: 43f54171d6a942f408e53d821228d224, type: 3}
+      objectReference: {fileID: 2800000, guid: 788a55e65ff20ee4c9e72fd2be230a6f, type: 3}
     - target: {fileID: 3439576180377270217, guid: de342bf20e4ec36429de0390dfca3048,
         type: 3}
       propertyPath: roomsParent

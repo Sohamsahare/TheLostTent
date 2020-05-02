@@ -41,6 +41,9 @@ public class RoomManager : MonoBehaviour
     private int virtualCameraPriority = 99999;
     private Transform playerTransform;
     private Vector2Int lastRoom;
+    private float[] terminalProbabilities;
+    [SerializeField]
+    private float incrementalProbability = .33f;
 
     private void Awake()
     {
@@ -50,6 +53,7 @@ public class RoomManager : MonoBehaviour
 
     private void Start()
     {
+        terminalProbabilities = new float[4];
         roomInfos = new HashSet<RoomInfo>();
         conflictPositions = new HashSet<Vector2>();
         playerTransform.GetComponentInChildren<Heart>().deathEvent += () =>
@@ -61,124 +65,6 @@ public class RoomManager : MonoBehaviour
         Debug.Log("We have " + roomPrefabs.Length + " room prefabs");
     }
 
-    public void setCurrentRoom(Vector2Int gridPos)
-    {
-        // set camera priority to display that room
-        if (gridPos.x < rooms.GetLength(0) && gridPos.y < rooms.GetLength(1))
-        {
-            RoomInfo roomInfo = rooms[gridPos.x, gridPos.y];
-            CinemachineVirtualCamera camera = roomInfo.camera;
-            // increase priority ot override last camera which is displaying
-            if (!lastRoom.Equals(gridPos))
-            {
-                virtualCameraPriority += 2;
-                camera.Priority = virtualCameraPriority;
-                Debug.Log($"Increasing priority {virtualCameraPriority} and changing current room at {gridPos}");
-            }
-            lastRoom = gridPos;
-        }
-
-    }
-
-
-    public Vector2 GetNextRoomPosition(Vector2 roomCenterPosition, char direction)
-    {
-        Vector2 nextPosition = new Vector2(roomWidth, roomHeight);
-        switch (direction)
-        {
-            case 'L':
-                nextPosition.x *= 1;
-                nextPosition.y *= 1;
-                nextPosition += roomCenterPosition;
-                return nextPosition;
-            case 'R':
-                nextPosition.x *= -1;
-                nextPosition.y *= -1;
-                nextPosition += roomCenterPosition;
-                return nextPosition;
-            case 'T':
-                nextPosition.x *= 1;
-                nextPosition.y *= -1;
-                nextPosition += roomCenterPosition;
-                return nextPosition;
-            case 'B':
-                nextPosition.x *= -1;
-                nextPosition.y *= 1;
-                nextPosition += roomCenterPosition;
-                return nextPosition;
-            default:
-                Debug.Log("Next room position invalid! -> " + direction);
-                return nextPosition;
-        }
-    }
-
-    public char getOppositeDirection(char direction)
-    {
-        switch (direction)
-        {
-            case 'T':
-                return 'B';
-            case 'B':
-                return 'T';
-            case 'R':
-                return 'L';
-            case 'L':
-                return 'R';
-            default:
-                Debug.Log("Opposite direction invalid! -> " + direction);
-                return '+';
-        }
-    }
-
-    public void EnableRoomAt(ExitOrientation orientation)
-    {
-        Debug.Log("Enabling room in direction " + orientation);
-        Vector2Int movement = Vector2Int.zero;
-        switch (orientation)
-        {
-            case ExitOrientation.T:
-                movement = Vector2Int.up;
-                break;
-            case ExitOrientation.B:
-                movement = Vector2Int.down;
-                break;
-            case ExitOrientation.L:
-                movement = Vector2Int.left;
-                break;
-            case ExitOrientation.R:
-                movement = Vector2Int.right;
-                break;
-            default:
-                Debug.Log("Invalid Orientation");
-                break;
-        }
-        currentGridPosition += movement;
-        var room = rooms[currentGridPosition.x, currentGridPosition.y];
-        if (room.roomObj != null)
-        {
-            Debug.Log("Retrieving room => " + room.ToString() + " at " + currentGridPosition);
-            room.roomObj.SetActive(true);
-        }
-        else
-        {
-            Debug.Log("Null room " + currentGridPosition);
-        }
-    }
-
-    public TileEntry GetTile(Color color)
-    {
-        if (colorToTileDictionary.ContainsKey(color))
-        {
-            // retrieve tile and return
-            TileEntry tile = colorToTileDictionary[color];
-            return tile;
-        }
-        else
-        {
-            return new TileEntry();
-        }
-    }
-
     // Initialises all variables and spawns rooms in a recursive manner 
     public void CreateDungeon()
     {
@@ -186,6 +72,7 @@ public class RoomManager : MonoBehaviour
         SpawnRooms();
     }
 
+    // replace/correct this method
     private void SpawnRooms()
     {
         Vector2Int gridPosition = gridSize;
@@ -193,8 +80,15 @@ public class RoomManager : MonoBehaviour
         // initialise starting room
         SpawnRoomRecursive(startRoom, gridPosition, startPosition, true);
     }
-    void SpawnRoomRecursive(string roomName, Vector2Int gridPosition, Vector2 roomPosition, bool isFirstRoom = false)
+    // replace/correct this method
+    void SpawnRoomRecursive(string roomName, Vector2Int gridPosition, Vector2 roomPosition, bool isFirstRoom = false, int pathIndex = -1)
     {
+        // stop spawning rooms if terminal probability reached
+        if (pathIndex != -1 && terminalProbabilities[pathIndex] > 1)
+        {
+            return;
+        }
+
         // instantiate room
         GameObject roomObj = Instantiate(nameToPrefabDictionary[roomName], roomPosition, Quaternion.identity, transform);
         roomObj.GetComponent<RoomBuilder>().SetGridPosition(gridPosition);
@@ -232,13 +126,35 @@ public class RoomManager : MonoBehaviour
                     // calculate necessary values 
                     Vector2 nextPosition = GetNextRoomPosition(roomPosition, direction);
 
-                    List<string> possibleRooms = directionToRoomNameDictionary[oppositeDirection];
-                    string nextRoomName = possibleRooms[UnityEngine.Random.Range(0, possibleRooms.Count)];
+                    // List<string> possibleRooms = directionToRoomNameDictionary[oppositeDirection];
+                    // string nextRoomName = possibleRooms[UnityEngine.Random.Range(0, possibleRooms.Count)];
+                    string nextRoomName = GetNextPossibleRoom(oppositeDirection, pathIndex);
 
                     if (spawnedRooms < maxSpawnableRooms)
                     {
-                        // Debug.Log($"Spawning {nextRoomName} of type {oppositeDirection} at grid {nextGridPosition} to join in direction {direction} for gridPos {gridPosition}");
-                        SpawnRoomRecursive(nextRoomName, nextGridPosition, nextPosition);
+                        Debug.Log($"Spawning {nextRoomName} of type {oppositeDirection} at grid {nextGridPosition} to join in direction {direction} for gridPos {gridPosition}");
+                        int localPathIndex = pathIndex;
+                        if (localPathIndex == -1)
+                        {
+                            switch (direction)
+                            {
+                                case 'T':
+                                    localPathIndex = 0;
+                                    break;
+                                case 'B':
+                                    localPathIndex = 1;
+                                    break;
+                                case 'L':
+                                    localPathIndex = 2;
+                                    break;
+                                case 'R':
+                                    localPathIndex = 3;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        SpawnRoomRecursive(nextRoomName, nextGridPosition, nextPosition, false, localPathIndex);
                     }
                 }
                 else
@@ -254,6 +170,97 @@ public class RoomManager : MonoBehaviour
         }
     }
 
+    private string GetNextPossibleRoom(char oppositeDirection, int pathIndex)
+    {
+        List<string> possibleRooms = directionToRoomNameDictionary[oppositeDirection];
+        string nextRoomName = possibleRooms[UnityEngine.Random.Range(0, possibleRooms.Count)];
+        if (pathIndex > -1 && pathIndex < terminalProbabilities.Length)
+        {
+            terminalProbabilities[pathIndex] += incrementalProbability;
+        }
+        if (pathIndex > -1 && terminalProbabilities[pathIndex] >= .9f)
+        {
+            nextRoomName = oppositeDirection + "";
+        }
+        return nextRoomName;
+    }
+
+    public void SetCurrentRoom(Vector2Int gridPos)
+    {
+        // set camera priority to display that room
+        if (gridPos.x < rooms.GetLength(0) && gridPos.y < rooms.GetLength(1))
+        {
+            RoomInfo roomInfo = rooms[gridPos.x, gridPos.y];
+            CinemachineVirtualCamera camera = roomInfo.camera;
+            // increase priority ot override last camera which is displaying
+            if (!lastRoom.Equals(gridPos))
+            {
+                virtualCameraPriority += 2;
+                camera.Priority = virtualCameraPriority;
+                Debug.Log($"Increasing priority {virtualCameraPriority} and changing current room at {gridPos}");
+            }
+            lastRoom = gridPos;
+        }
+
+    }
+
+    public Vector2 GetNextRoomPosition(Vector2 roomCenterPosition, char direction)
+    {
+        Vector2 nextPosition = new Vector2(roomWidth, roomHeight);
+        switch (direction)
+        {
+            case 'L':
+                nextPosition *= new Vector2Int(-1, 1);
+                break;
+            case 'R':
+                nextPosition *= new Vector2Int(1, -1);
+                break;
+            case 'T':
+                nextPosition *= new Vector2Int(1, 1);
+                break;
+            case 'B':
+                nextPosition *= new Vector2Int(-1, -1);
+                break;
+            default:
+                Debug.Log("Next room position invalid! -> " + direction);
+                break;
+        }
+        nextPosition += roomCenterPosition;
+        return nextPosition;
+    }
+
+    public char getOppositeDirection(char direction)
+    {
+        switch (direction)
+        {
+            case 'T':
+                return 'B';
+            case 'B':
+                return 'T';
+            case 'R':
+                return 'L';
+            case 'L':
+                return 'R';
+            default:
+                Debug.Log("Opposite direction invalid! -> " + direction);
+                return '+';
+        }
+    }
+
+    public TileEntry GetTile(Color color)
+    {
+        if (colorToTileDictionary.ContainsKey(color))
+        {
+            // retrieve tile and return
+            TileEntry tile = colorToTileDictionary[color];
+            return tile;
+        }
+        else
+        {
+            return new TileEntry();
+        }
+    }
+
     private Vector2Int getNextGridPosition(char direction, Vector2Int gridPosition)
     {
         Vector2Int nextGridPosition = gridPosition;
@@ -266,10 +273,10 @@ public class RoomManager : MonoBehaviour
             case 'T':
                 nextGridPosition += Vector2Int.up;
                 break;
-            case 'L':
+            case 'R':
                 nextGridPosition += Vector2Int.right;
                 break;
-            case 'R':
+            case 'L':
                 nextGridPosition += Vector2Int.left;
                 break;
             default:
@@ -277,31 +284,6 @@ public class RoomManager : MonoBehaviour
                 break;
         }
         return nextGridPosition;
-    }
-
-    private void PlaceRoom(Vector2 roomCenterPosition, char spawnDirection)
-    {
-
-        // determine the type to spawn in the doordirection 
-        char roomDirectionType = getOppositeDirection(spawnDirection);
-
-        // build rooms in directions available
-        Vector2 nextPosition = GetNextRoomPosition(roomCenterPosition, spawnDirection);
-
-        List<string> possibleRooms = directionToRoomNameDictionary[roomDirectionType];
-        string nextRoomName = possibleRooms[UnityEngine.Random.Range(0, possibleRooms.Count)];
-        // if (roomInfos.Contains(new RoomInfo(nextRoomName, nextPosition)))
-        // {
-        //     Debug.Log("Ignoring placing room as it already exists. " + nextPosition);
-        //     return;
-        // }
-
-        // Debug.Log("Spawning a " + roomDirectionType + " type in direction " + spawnDirection + " at " + nextPosition + " i.e. room -> " + nextRoomName);
-        GameObject roomObj = Instantiate(nameToPrefabDictionary[nextRoomName], nextPosition, Quaternion.identity, transform);
-        // roomObj.GetComponent<Room>().ignoreTriggerDirection = roomDirectionType;
-        // spawn enemies when requested
-        // levelManager.SpawnAt(nextPosition + new Vector2(roomWidth, 0));
-        // Debug.DrawRay(nextPosition + new Vector2(roomWidth, 0), Vector2.up, Color.red, 5f);
     }
 
     private void Initialize()
@@ -355,48 +337,32 @@ public class RoomManager : MonoBehaviour
             switch (c)
             {
                 case 'T':
-                    if (directionToRoomNameDictionary.ContainsKey('T'))
-                    {
-                        directionToRoomNameDictionary['T'].Add(roomName);
-                    }
-                    else
-                    {
-                        directionToRoomNameDictionary.Add('T', new List<string>() { roomName });
-                    }
+                    addToRoomDictionary(roomName, 'T');
                     break;
                 case 'B':
-                    if (directionToRoomNameDictionary.ContainsKey('B'))
-                    {
-                        directionToRoomNameDictionary['B'].Add(roomName);
-                    }
-                    else
-                    {
-                        directionToRoomNameDictionary.Add('B', new List<string>() { roomName });
-                    }
+                    addToRoomDictionary(roomName, 'B');
                     break;
                 case 'R':
-                    if (directionToRoomNameDictionary.ContainsKey('R'))
-                    {
-                        directionToRoomNameDictionary['R'].Add(roomName);
-                    }
-                    else
-                    {
-                        directionToRoomNameDictionary.Add('R', new List<string>() { roomName });
-                    }
+                    addToRoomDictionary(roomName, 'R');
                     break;
                 case 'L':
-                    if (directionToRoomNameDictionary.ContainsKey('L'))
-                    {
-                        directionToRoomNameDictionary['L'].Add(roomName);
-                    }
-                    else
-                    {
-                        directionToRoomNameDictionary.Add('L', new List<string>() { roomName });
-                    }
+                    addToRoomDictionary(roomName, 'L');
                     break;
                 default:
                     break;
 
+            }
+        }
+
+        void addToRoomDictionary(string _roomName, char _direction)
+        {
+            if (directionToRoomNameDictionary.ContainsKey(_direction))
+            {
+                directionToRoomNameDictionary[_direction].Add(_roomName);
+            }
+            else
+            {
+                directionToRoomNameDictionary.Add(_direction, new List<string>() { _roomName });
             }
         }
     }
