@@ -1588,6 +1588,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2514296088678970273, guid: b2d775f476252e44d815915990922ef2,
         type: 3}
+      propertyPath: enemyPrefabs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2514296088678970273, guid: b2d775f476252e44d815915990922ef2,
+        type: 3}
       propertyPath: cameraMain
       value: 
       objectReference: {fileID: 519420031}
@@ -1611,6 +1616,24 @@ PrefabInstance:
       propertyPath: startPosition.y
       value: 0.25
       objectReference: {fileID: 0}
+    - target: {fileID: 2514296088678970273, guid: b2d775f476252e44d815915990922ef2,
+        type: 3}
+      propertyPath: enemyPrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 4285674681218143851, guid: 3b18a54029cf265409c3cd41550dbf8d,
+        type: 3}
+    - target: {fileID: 2514296088678970273, guid: b2d775f476252e44d815915990922ef2,
+        type: 3}
+      propertyPath: enemyPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 8205288300609589531, guid: 5dba68a1715b8af4a9358b999b83afae,
+        type: 3}
+    - target: {fileID: 2514296088678970273, guid: b2d775f476252e44d815915990922ef2,
+        type: 3}
+      propertyPath: enemyPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 638744156647964214, guid: cb618aff2a83e0a428f83622d7e2a5c7,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b2d775f476252e44d815915990922ef2, type: 3}
 --- !u!1 &2132041144
@@ -1645,16 +1668,17 @@ MonoBehaviour:
   objectPools:
   - tag: Archer
     parent: {fileID: 1072163326}
-    prefab: {fileID: 4371087681798328710, guid: ff8070929e290a04080ac7c69a9640e1,
-      type: 3}
+    prefab: {fileID: 638744156647964214, guid: cb618aff2a83e0a428f83622d7e2a5c7, type: 3}
     capacity: 10
   - tag: Skeleton
     parent: {fileID: 554834317}
-    prefab: {fileID: 492, guid: 037329b6095141949a6a8854762d72e9, type: 3}
+    prefab: {fileID: 8205288300609589531, guid: 5dba68a1715b8af4a9358b999b83afae,
+      type: 3}
     capacity: 10
   - tag: Mage
     parent: {fileID: 225019772}
-    prefab: {fileID: 465, guid: 307ecd54f79e0af44bf692b7ea32c536, type: 3}
+    prefab: {fileID: 4285674681218143851, guid: 3b18a54029cf265409c3cd41550dbf8d,
+      type: 3}
     capacity: 10
   - tag: Fireball
     parent: {fileID: 569761552}
