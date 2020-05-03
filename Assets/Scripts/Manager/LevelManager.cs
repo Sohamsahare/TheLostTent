@@ -19,6 +19,7 @@ public class LevelManager : MonoBehaviour
     public float restartWaitDuration = 1f;
     public float baseSpeed = 1;
     public float speedIncrement = .2f;
+    public float spawnDelay = 0.1f;
     public float spawnAnimDuration = 1f;
     private int enemiesAlive = 0;
     private Vector2 spawnCenter;
@@ -30,11 +31,13 @@ public class LevelManager : MonoBehaviour
     private List<GameObject> characterObjs;
     [SerializeField]
     private Vector2 startPosition = new Vector2(13, 6);
+
     private void Awake()
     {
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         pooler = GameObject.FindGameObjectWithTag("Pooler").GetComponent<Pooler>();
     }
+
     private void Start()
     {
         enemyTags = new List<string>(enemyPrefabs.Select(x => x.name));
@@ -46,19 +49,12 @@ public class LevelManager : MonoBehaviour
         {
             ResetLevel();
         };
-        Invoke("SpawnNow", 0.1f);
+        Invoke("SpawnNow", spawnDelay);
     }
 
     void SpawnNow()
     {
         StartCoroutine(SpawnEnemies(playerTransform.position));
-    }
-
-    private void Update()
-    {
-        // if (enemiesAlive <= 0 && !isSpawning)
-        // {
-        // }
     }
 
     public void SpawnAt(Vector2 position)
@@ -71,43 +67,6 @@ public class LevelManager : MonoBehaviour
         {
             // Debug.LogWarning("Was already spawning");
         }
-    }
-
-    public Vector2 GetNextRoomPosition(Vector2 roomCenterPosition, char direction, float roomWidth, float roomHeight)
-    {
-        Vector2 nextPosition = new Vector2(roomWidth, roomHeight);
-        switch (direction)
-        {
-            case 'L':
-                nextPosition.x *= 1;
-                nextPosition.y *= 1;
-                nextPosition += roomCenterPosition;
-                return nextPosition;
-            case 'R':
-                nextPosition.x *= -1;
-                nextPosition.y *= -1;
-                nextPosition += roomCenterPosition;
-                return nextPosition;
-            case 'T':
-                nextPosition.x *= 1;
-                nextPosition.y *= -1;
-                nextPosition += roomCenterPosition;
-                return nextPosition;
-            case 'B':
-                nextPosition.x *= -1;
-                nextPosition.y *= 1;
-                nextPosition += roomCenterPosition;
-                return nextPosition;
-            default:
-                Debug.Log("Next room position invalid! -> " + direction);
-                return nextPosition;
-        }
-    }
-
-    public void RequestEnemiesAtRoom(Vector2 roomPosition, char direction, float roomWidth, float roomHeight)
-    {
-        var nextPosition = GetNextRoomPosition(roomPosition, direction, roomWidth, roomHeight);
-        SpawnAt(nextPosition + new Vector2(roomWidth, 0));
     }
 
     IEnumerator SpawnEnemies(Vector2 spawnCenter)
@@ -166,6 +125,9 @@ public class LevelManager : MonoBehaviour
                 textObj.text = enemiesAlive.ToString();
                 characterObjs.Remove(enemyObj);
                 Debug.Log("Enemies Alive - " + enemiesAlive);
+                // if enemiesAlive goes to zero
+                // then spawn item rewards
+                
             };
             // set enemy movement speed
             enemyObj.GetComponent<CharacterMotor>().movementSpeed = baseSpeed + levelNum * speedIncrement;
