@@ -7,8 +7,14 @@ namespace TheLostTent
 {
     public class Witch : Character
     {
+        [Tooltip("damage potential of an attack projectile")]
         public float attackPower = 33f;
-        public float attackSpeed = 100f;
+        [Tooltip("speed at which an attack projectile is fired")]
+        public float projectileSpeed = 100f;
+        [Tooltip("number of attacks per second")]
+        public float attackSpeed = 4;
+        [Tooltip("min joystick movement required to enable shooting")]
+        public float minShootThreshold = .2f;
         public float dashDistance = 5f;
         public float dashDamageMultiplier = 2f;
         public float dashCooldown = 1f;
@@ -17,6 +23,7 @@ namespace TheLostTent
         public CameraShake cameraShake;
         private new CircleCollider2D collider;
         private BoxCollider2D trigger;
+        private bool isAttacking;
         private bool isDashing;
         private Heart heart;
         CharacterMotor motor;
@@ -25,6 +32,7 @@ namespace TheLostTent
         private LevelManager levelManager;
         private CinemachineImpulseSource impulseSource;
         public float impulseMagnitude = 1;
+        private Vector3 lastMovement;
 
         private new void Awake()
         {
@@ -48,25 +56,23 @@ namespace TheLostTent
 
         private void Update()
         {
-            Vector3 dashDirection = new Vector3(Input.GetAxisMobile("D_Horizontal"), Input.GetAxisMobile("D_Vertical"), 0f);
-            bool dashCondition = false;
-            bool shootCondition = false;
-#if UNITY_EDITOR
-            dashCondition = !!(dashDirection != Vector3.zero);
-#elif UNITY_ANDROID
-            dashCondition = Input.GetButtonDownMobile("Dash");
-#endif
-#if UNITY_EDITOR
-            shootCondition = Input.GetButtonDown("Fire1");
-#elif UNITY_ANDROID
-            shootCondition = Input.GetButtonDownMobile("Shoot");
-#endif
+            // dash in the direction of movement
+            Vector3 dashDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0f);
+
+            bool dashCondition = Input.GetButtonDownMobile("Dash");
+            // if aim stick has been moved above the threshold value, 
+            // then enable shooting
+            bool shootCondition = Mathf.Max(
+                Mathf.Abs(Input.GetAxis("Aim_Horizontal")),
+                Mathf.Abs(Input.GetAxis("Aim_Vertical"))
+                ) > minShootThreshold;
+
             if (dashCondition)
             {
                 Dash(dashDirection);
             }
-            // pressing the fire button
-            else if (shootCondition)
+
+            if (shootCondition)
             {
                 Attack();
             }
@@ -75,28 +81,40 @@ namespace TheLostTent
         private void FixedUpdate()
         {
             Vector2 movement;
-#if UNITY_EDITOR
             movement = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-#elif UNITY_ANDROID
-            movement = new Vector2(Input.GetAxisMobile("Horizontal"), Input.GetAxisMobile("Vertical"));
-#endif
-            // Debug.Log("movement " + movement);1
             motor.Move(movement);
             isoRenderer.SetDirection(movement);
+            if (movement != Vector2.zero)
+            {
+                lastMovement = movement;
+            }
         }
 
+        // todo: add modifiers and limit to attack potential
         public void Attack()
         {
-            var obj = pooler.RetrieveFromPool(Constants.PoolTags.Fireball, transform.position, Vector3Int.zero, transform);
+            if (!isAttacking)
+            {
+                StartCoroutine(DoAttack());
+            }
+        }
+
+        private IEnumerator DoAttack()
+        {
+            isAttacking = true;
+            // for dual stick input
+            Vector2 direction = new Vector2(Input.GetAxis("Aim_Horizontal"), Input.GetAxis("Aim_Vertical"));
+            Debug.DrawRay(transform.position, direction, Color.red, 1);
+            GameObject obj = pooler.RetrieveFromPool(Constants.PoolTags.Fireball, transform.position, Vector3Int.zero, transform);
             obj.GetComponent<Fireball>().damage = attackPower;
-            var rb = obj.GetComponent<Rigidbody2D>();
-            // var direction = DirectionFromString(isoRenderer.CurrentDirection);
-            var direction = GetNonMovementTouch();
-            // Debug.Log(direction);
-            rb.AddForce(
-                (direction * attackSpeed)
-            );
+            Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
+            // rb.AddForce(
+            //     (direction * projectileSpeed)
+            // );
+            rb.velocity = (direction * projectileSpeed);
             pooler.ReturnToPool(Constants.PoolTags.Fireball, obj, 3f);
+            yield return new WaitForSeconds(1 / attackSpeed);
+            isAttacking = false;
         }
 
         public void Dash(Vector3 dashDirection)
@@ -109,6 +127,10 @@ namespace TheLostTent
 
         IEnumerator DashNow(Vector3 dashDirection)
         {
+            if (dashDirection == Vector3.zero)
+            {
+                dashDirection = lastMovement.normalized;
+            }
             dashTrail.enabled = true;
             Vector3 start = transform.position;
             Vector3 end = transform.position + dashDirection * dashDistance;
@@ -130,27 +152,6 @@ namespace TheLostTent
             isDashing = false;
         }
 
-        Vector2 GetNonMovementTouch()
-        {
-            Vector2 dir = Vector2.zero;
-            if (Input.touchCount == 1)
-            {
-                dir = Input.GetTouch(0).position - (Vector2)Camera.main.WorldToScreenPoint(transform.position);
-            }
-            else if (Input.touchCount > 1)
-            {
-                dir = Input.GetTouch(Input.touchCount - 1).position - (Vector2)Camera.main.WorldToScreenPoint(transform.position);
-            }
-            else
-            {
-                // means input from pc
-                dir = Input.mousePosition - (Vector2)Camera.main.WorldToScreenPoint(transform.position);
-                // dir = DirectionFromString(isoRenderer.CurrentDirection);
-
-            }
-            dir = dir.normalized;
-            return dir;
-        }
 
         Vector2 DirectionFromString(string directionString)
         {
@@ -193,6 +194,8 @@ namespace TheLostTent
         public void TakeDamage(float damage)
         {
             heart.Damage(damage);
+
+
             Vector3 velocity = Random.insideUnitSphere * impulseMagnitude;
             // kill the z-channel to avoid going below the 2d plane 
             // where characters are spawned
@@ -200,7 +203,14 @@ namespace TheLostTent
             // higher intensity if the player dies
             if (heart.IsDead)
             {
+                // strong vibrate when player dies
+                Vibration.VibratePop();
                 velocity *= 3;
+            }
+            else
+            {
+                // vibrate when player recieves damage
+                Vibration.VibratePeek();
             }
             // create camera shake effect 
             impulseSource.GenerateImpulse(velocity);
